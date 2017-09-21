@@ -68,12 +68,14 @@
 				<blockquote>
 					<p>Merge definitions of transpiled namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)</p>
 				</blockquote>
+				<h4 id="beta-still-being-developed-tested-">BETA (still being developed / tested)</h4>
 				<h2 id="about">About</h2>
 				<p>This is a post-processor for <a href="https://www.typescriptlang.org/">TypeScript</a>, which allows the merging of both transpiled code <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">IIFE blocks</a> and duplicate namespaces in declaration files, and also re-maps the source for debugging (via <a href="https://github.com/mozilla/source-map">source-map</a>).</p>
 				<p>It can be used through command-line, in stream pipelines (i.e. gulp), or directly in code, without the need for any additional plugins.</p>
 				<p>It is based of and inspired by Till Schneidereit&#39;s <a href="https://github.com/tschneidereit/typescript-module-merger">typescript-module-merger</a>.</p>
 				<h2 id="installation">Installation</h2>
 				<p>It can be installed using the node package manager of your choice (npm, yarn).</p>
+				<p><strong>IMPORTANT</strong>: This version is still being heavily tested and it&#39;s usage is still NOT RECOMMENDED. Give me a week and everything should be fine, including usage, help and documentation.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -136,6 +138,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#merger" class="tsd-kind-icon">merger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#threshold" class="tsd-kind-icon">threshold</a>
