@@ -1,0 +1,65 @@
+{
+    "name": "ts-merge",
+    "description": "Merge definitions of transpiled namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)",
+    "author": "Pedro Batista <pedrobatista@myself.com>",
+    "keywords": [
+        "typescript",
+        "merge",
+        "namespace",
+        "iife",
+        "post processor"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pjbatista/ts-merge.git"
+    },
+    "bugs": {
+        "url": "https://github.com/pjbatista/ts-merge/issues"
+    },
+    "license": "Apache-2.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "ts-merge": "bin/ts-merge"
+    },
+    "scripts": {
+        "build": "tsc && typedoc --project . --out docs/ --mode file --name \"TypeScript Merge\" --excludePrivate",
+        "lint": "tslint",
+        "publish": "npm run build",
+        "test": "mocha"
+    },
+    "files": [
+        "/dist/",
+        "/docs/",
+        "package.json",
+        "README.md",
+        "LICENSE"
+    ],
+    "dependencies": {
+        "escodegen": "^1.9.0",
+        "esprima": "^4.0.0",
+        "event-stream": "^3.3.4",
+        "glob": "^7.1.2",
+        "gulp-util": "^3.0.8",
+        "minimatch": "^3.0.4",
+        "source-map": "^0.5.7",
+        "typescript": "^2.4.0",
+        "typescript-module-merger": "^0.1.2",
+        "yargs": "^8.0.2"
+    },
+    "devDependencies": {
+        "@types/escodegen": "^0.0.6",
+        "@types/esprima": "^4.0.0",
+        "@types/estree": "^0.0.37",
+        "@types/event-stream": "^3.3.32",
+        "@types/glob": "^5.0.32",
+        "@types/gulp-util": "^3.0.31",
+        "@types/minimatch": "^3.0.1",
+        "@types/source-map": "^0.5.1",
+        "@types/through": "^0.0.29",
+        "@types/yargs": "^8.0.2",
+        "tslint": "^5.7.0",
+        "typedoc": "^0.8.0"
+    },
+    "version": "0.1.1"
+}
