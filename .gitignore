@@ -63,3 +63,4 @@ yarn.lock
 
 # Distribution directory
 dist/
+test-files/

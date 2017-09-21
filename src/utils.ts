@@ -27,6 +27,10 @@ const parseOptions: ParseOptions = {
 
 const consoleLogger = ((message: string, level: LogLevel = LogLevel.Information) => {
 
+    if (level === LogLevel.Verbose) {
+        return;
+    }
+
     let color = gutil.colors.reset;
     let expose = true;
 
@@ -253,7 +257,7 @@ export class MergeContext {
         }
 
         this._errors.push(error);
-        this.log(error.message, LogLevel.Error);
+        this.log(error.message + error.stack, LogLevel.Error);
 
         return error;
     }

@@ -2,7 +2,7 @@ import ts = require("typescript");
 import yargs = require("yargs");
 
 import {FileWorker} from "./file-worker";
-import {MergeContext, MergeOptions} from "./utils";
+import {LogLevel, MergeContext, MergeOptions} from "./utils";
 
 /**
  * Represents the application behind the command-line interface.
@@ -70,6 +70,15 @@ export class CliApplication {
 
             this._fileWorker.workAndSave(() => {
                 this._context.log("All files processed.");
+
+                const skipped = this._fileWorker.skipped.length;
+
+                if (skipped === 0) {
+                    return;
+                }
+
+                this._context.log(`Skipped ${skipped} files due to unknown file name`,
+                    LogLevel.Verbose);
             });
         }, this._input);
     }

@@ -134,11 +134,10 @@ export class FileWorker {
      */
     public workAndSave(callback?: () => void) {
 
-        this._prepareWork(files => {
+        this._prepareWork(file => {
 
-            this._write(files);
-            if (callback) { callback(); }
-        });
+            this._write(file);
+        }, callback);
     }
 
     // Generator that creates the processors for each file
@@ -156,9 +155,13 @@ export class FileWorker {
     }
 
     // Prepares all files to be saved
-    private _prepareWork(callback: (results: File[]) => void) {
+    private _prepareWork(
+        fileCallback: (results: File | File[]) => void,
+        doneCallback?: () => void,
+    ) {
 
-        const results: File[] = [];
+        doneCallback = doneCallback || (() => {});
+
         const workGenerator = this._doWork();
 
         let count = 0;
@@ -168,13 +171,14 @@ export class FileWorker {
         while (!promise.done) {
 
             promise.value
-                .then(value => {
+                .then(file => {
                     count += 1;
-                    value.size = value.contents.length;
-                    results.push(value);
+                    file.size = file.contents.length;
+
+                    fileCallback(file);
 
                     if (count === total) {
-                        callback(results);
+                        (doneCallback as any)();
                         return;
                     }
                 })
@@ -212,7 +216,11 @@ export class FileWorker {
     }
 
     // Writes the merged files
-    private _write(files: File[]) {
+    private _write(files: File | File[]) {
+
+        if (!(files instanceof Array)) {
+            files = [files];
+        }
 
         for (const file of files) {
 
@@ -230,11 +238,6 @@ export class FileWorker {
             }
 
             fs.writeFileSync(filePath, file.contents);
-        }
-
-        if (this._skipped.length > 0) {
-            this._context.log(`Skipped ${this._skipped.length} files due to unknown file name`,
-                LogLevel.Verbose);
         }
     }
 }

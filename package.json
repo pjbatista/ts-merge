@@ -42,7 +42,6 @@
         "minimatch": "^3.0.4",
         "source-map": "^0.5.7",
         "typescript": "^2.4.0",
-        "typescript-module-merger": "^0.1.2",
         "yargs": "^8.0.2"
     },
     "devDependencies": {
@@ -59,5 +58,5 @@
         "tslint": "^5.7.0",
         "typedoc": "^0.8.0"
     },
-    "version": "0.1.4"
+    "version": "0.1.5"
 }
