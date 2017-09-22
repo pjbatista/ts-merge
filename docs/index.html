@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -68,14 +66,108 @@
 				<blockquote>
 					<p>Merge definitions of transpiled namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)</p>
 				</blockquote>
-				<h4 id="beta-still-being-developed-tested-">BETA (still being developed / tested)</h4>
 				<h2 id="about">About</h2>
-				<p>This is a post-processor for <a href="https://www.typescriptlang.org/">TypeScript</a>, which allows the merging of both transpiled code <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">IIFE blocks</a> and duplicate namespaces in declaration files, and also re-maps the source for debugging (via <a href="https://github.com/mozilla/source-map">source-map</a>).</p>
-				<p>It can be used through command-line, in stream pipelines (i.e. gulp), or directly in code, without the need for any additional plugins.</p>
-				<p>It is based of and inspired by Till Schneidereit&#39;s <a href="https://github.com/tschneidereit/typescript-module-merger">typescript-module-merger</a>.</p>
+				<p>This is a post-processor for <a href="https://www.typescriptlang.org/">TypeScript</a>, which allows the merging of <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">IIFE blocks</a> in transpiled code (.js) and duplicate namespaces in declaration files (.d.ts). It is also able to re-map sources (.map) in order to debug TypeScript from merged files.</p>
+				<p>It can be used through command-line, directly in code, or in stream pipelines (e.g. gulp), without the need for any additional plugins.</p>
+				<p>It is based of and inspired by Till Schneidereit&#39;s <a href="https://github.com/tschneidereit/typescript-module-merger">typescript-module-merger</a> and all credits for the JS merging goes to him!</p>
 				<h2 id="installation">Installation</h2>
-				<p>It can be installed using the node package manager of your choice (npm, yarn).</p>
-				<p><strong>IMPORTANT</strong>: This version is still being heavily tested and it&#39;s usage is still NOT RECOMMENDED. Give me a week and everything should be fine, including usage, help and documentation.</p>
+				<p>It can be installed using the node package manager of your choice (npm, yarn):</p>
+				<h3 id="local">Local</h3>
+				<p>Local installations allow this plugin to be used on a per project basis:</p>
+				<p><code>npm install ts-merge --save</code></p>
+				<p><code>yarn add ts-merge</code></p>
+				<h3 id="global">Global</h3>
+				<p>Global installations expose the <strong>ts-merge</strong> binary to the command-line, making it available, well, globally:</p>
+				<p><code>npm install ts-merge -g</code></p>
+				<p><code>yarn global add ts-merge</code></p>
+				<h2 id="usage">Usage</h2>
+				<p>Once is installed, <code>ts-merge</code> will be available to be used directly, via a stream pipeline or through a CLI app:</p>
+				<h3 id="direct">Direct</h3>
+				<p>Using ts-merge in your code is pretty straight-forward. You can use a specific processor class in order to merge a single file or the FileWorker class (have to manually read the file) to do it with multiple files at once (no manual read required).</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>);
+
+<span class="hljs-keyword">var</span> myData = fs.readFileSync(<span class="hljs-string">"myfile.js"</span>);
+<span class="hljs-keyword">var</span> myProcessor = <span class="hljs-keyword">new</span> tsmerge.JsProcessor(myData);
+<span class="hljs-keyword">var</span> mergedData = myProcessor.merge();
+
+fs.writeFileSync(<span class="hljs-string">"myfile.merged.js"</span>);
+</code></pre>
+				<hr>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>);
+
+<span class="hljs-comment">// Creating a context in order to pass some options</span>
+<span class="hljs-keyword">var</span> context = <span class="hljs-keyword">new</span> tsmerge.MergeContext({
+    <span class="hljs-attr">extensionPrefix</span>: <span class="hljs-string">"clean"</span>,
+    <span class="hljs-attr">logger</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">msg, level</span>) </span>{
+        mylogger(msg, level);
+    }
+});
+
+<span class="hljs-keyword">var</span> fileWorker = <span class="hljs-keyword">new</span> tsmerge.FileWorker(context);
+fileWorker.addFile(<span class="hljs-string">"myfile.js"</span>);
+fileWorker.addFile(<span class="hljs-string">"myfile.d.ts"</span>);
+fileWorker.addFile(<span class="hljs-string">"lib/plugin.js"</span>);
+
+<span class="hljs-comment">// Async merging and writing all files in worker</span>
+fileWorker.work(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    fileWorker.write();
+
+    <span class="hljs-comment">// FileWorker has a nice Timer utility</span>
+    <span class="hljs-built_in">console</span>.log(fileWorker.timer.toString()); <span class="hljs-comment">// 315.041155 ms</span>
+    <span class="hljs-built_in">console</span>.log(fileWorker.timer.totalNanoSeconds); <span class="hljs-comment">// 315041155</span>
+});
+</code></pre>
+				<h3 id="stream-pipeline-gulp-">Stream Pipeline (gulp)</h3>
+				<p>ts-merge requires no additional plugins to be piped. All you need is to import the <code>streamFunction</code> from the stream module or from the index.</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge/stream"</span>);
+<span class="hljs-comment">// OR</span>
+<span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>).streamFunction;
+
+gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+
+    <span class="hljs-keyword">return</span> gulp.src(<span class="hljs-string">"dist/**/*"</span>)
+        .pipe(tsmerge({ <span class="hljs-attr">sourceMaps</span>: <span class="hljs-literal">false</span> }))
+        .pipe(gulp.dest(<span class="hljs-string">"."</span>));
+});
+</code></pre>
+				<h3 id="command-line-interface-application">Command-line interface application</h3>
+				<p>The CLI app is available globally as <code>ts-merge</code> and locally at <code>node_modules/.bin/ts-merge</code>.</p>
+				<p>You can specify options using --[option]</p>
+				<pre><code class="lang-sh">ts-merge out/my.js --extensionPrefix <span class="hljs-string">""</span>
+<span class="hljs-comment"># An empty extensionPrefix overwrites out/my.js</span>
+</code></pre>
+				<p>The app can also be used with multiple files.</p>
+				<pre><code class="lang-sh">ts-merge lib/vendor1/* lib/vendor2/*.ts --logger none
+<span class="hljs-comment"># Setting logger to "none" prevents log printing</span>
+</code></pre>
+				<h2 id="changelog">Changelog</h2>
+				<h3 id="version-0-2-0">Version 0.2.0</h3>
+				<blockquote>
+					<p>First version with all features, documentation, and unit testing</p>
+				</blockquote>
+				<ul>
+					<li>Added a better text to the README (aka this thing you&#39;re reading);</li>
+					<li>Renamed the <code>sourceMaps</code> option to <code>skipSourceMaps</code>, and adjusted its behavior appropriately;</li>
+					<li>All options are coded in context, cli, processors and workers;</li>
+					<li>Added <code>ts-merge/stream</code> module with the default export <code>streamFunction</code>;</li>
+					<li>Added missing type exports on index.</li>
+				</ul>
+				<h3 id="version-0-1-5">Version 0.1.5</h3>
+				<ul>
+					<li>FileWorker.workAndSave has been <strong>deprecated</strong>;</li>
+					<li>FileWorker no longer exceeds Node.JS heap limit when dealing with multiple large files;</li>
+				</ul>
+				<h3 id="version-0-1-4">Version 0.1.4</h3>
+				<ul>
+					<li>Removed the necessity for <code>typescript-module-merger</code> as its functionality was fully embedded in ts-merge.</li>
+				</ul>
+				<h3 id="version-0-1-3-and-older">Version 0.1.3 and older</h3>
+				<p>Incomplete project commits. Mockups and initial NPM testing. Extremely unstable.</p>
+				<h2 id="credits">Credits</h2>
+				<p>Pedro Batista <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#58;&#112;&#x65;&#x64;&#114;&#111;&#x62;&#97;&#x74;&#x69;&#115;&#x74;&#97;&#64;&#109;&#121;&#115;&#x65;&#108;&#102;&#x2e;&#99;&#x6f;&#x6d;">&#112;&#x65;&#x64;&#114;&#111;&#x62;&#97;&#x74;&#x69;&#115;&#x74;&#97;&#64;&#109;&#121;&#115;&#x65;&#108;&#102;&#x2e;&#99;&#x6f;&#x6d;</a></p>
+				<p>This plugin would not exist were it not for <a href="https://github.com/tschneidereit/typescript-module-merger">TypeScript Module Merger, by Till Schneidereit</a>.</p>
+				<h2 id="license">License</h2>
+				<p><a href="https://github.com/pjbatista/ts-merge/blob/master/LICENSE">Apache License 2.0</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -109,6 +201,9 @@
 					<li class=" tsd-kind-class">
 						<a href="classes/mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/timer.html" class="tsd-kind-icon">Timer</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/declaration.html" class="tsd-kind-icon">Declaration</a>
 					</li>
@@ -137,13 +232,28 @@
 						<a href="globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#context" class="tsd-kind-icon">context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#threshold" class="tsd-kind-icon">threshold</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-not-exported">
 						<a href="globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>
@@ -156,6 +266,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
 						<a href="globals.html#nonelogger" class="tsd-kind-icon">none<wbr>Logger</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#parsefile" class="tsd-kind-icon">parse<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-is-not-exported">
 						<a href="globals.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a>

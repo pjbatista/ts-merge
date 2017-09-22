@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "module": "commonjs",
         "moduleResolution": "node",
         "types": ["node"],
@@ -8,7 +8,7 @@
         "outDir": "dist",
         "declaration": true,
         "removeComments": false,
-        "sourceMap": true,
+        "inlineSourceMap": true,
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -18,12 +18,6 @@
         "emitDecoratorMetadata": true,
         "pretty": true
     },
-    "exclude": [
-        "**/node_modules",
-        "**/*.spec.ts",
-        "source/**/*.d.ts"
-    ],
-    "include": [
-        "src/**/*.ts"
-    ]
+    "exclude": ["**/node_modules"],
+    "include": ["src/**/*.ts"]
 }

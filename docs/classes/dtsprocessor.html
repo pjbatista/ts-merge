@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -140,13 +138,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L92">dts-processor.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L92">dts-processor.ts:92</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Initializes a new instance of the {@link DeclarationProcessor} class, using the input file as
-									content source for the merging.</p>
+									<p>Initializes a new instance of the <a href="dtsprocessor.html">DtsProcessor</a> class, using the input file as content
+									source for the merging.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -179,23 +177,23 @@
 					<a name="merge" class="tsd-anchor"></a>
 					<h3>merge</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">merge<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">merge<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L128">dts-processor.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L128">dts-processor.ts:128</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Merges the input declaration file of this object, returning an asynchronous promise with the
-									resulting data as an object.</p>
+									<p>Merges the input declaration file of this object, returning the merged file as result.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>  A promise containing the <a href="../interfaces/file.html">File</a> result of the merging, on success.</p>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/file.html" class="tsd-signature-type">File</a></h4>
+							<p>  A file object, containing the results of the merging and all attributes pertaining to it,
+							or null if the file contains no mergeable declarations.</p>
 						</li>
 					</ul>
 				</section>
@@ -244,6 +242,9 @@
 					<li class=" tsd-kind-class">
 						<a href="mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="timer.html" class="tsd-kind-icon">Timer</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/declaration.html" class="tsd-kind-icon">Declaration</a>
 					</li>
@@ -272,13 +273,28 @@
 						<a href="../globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#context" class="tsd-kind-icon">context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="../globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="../globals.html#threshold" class="tsd-kind-icon">threshold</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-not-exported">
 						<a href="../globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>
@@ -291,6 +307,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
 						<a href="../globals.html#nonelogger" class="tsd-kind-icon">none<wbr>Logger</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../globals.html#parsefile" class="tsd-kind-icon">parse<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-is-not-exported">
 						<a href="../globals.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a>

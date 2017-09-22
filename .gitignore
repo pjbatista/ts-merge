@@ -61,6 +61,6 @@ typings/
 package-lock.json
 yarn.lock
 
-# Distribution directory
+# Distribution and temp directories
 dist/
-test-files/
+tests/temp/

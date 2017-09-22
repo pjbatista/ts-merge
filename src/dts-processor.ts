@@ -92,8 +92,8 @@ export class DtsProcessor implements MergeProcessor {
     private _file: File;
 
     /**
-     * Initializes a new instance of the {@link DeclarationProcessor} class, using the input file as
-     * content source for the merging.
+     * Initializes a new instance of the {@link DtsProcessor} class, using the input file as content
+     * source for the merging.
      *
      * @param file
      *   A string with the file contents or a {@link InputFile} object.
@@ -109,7 +109,7 @@ export class DtsProcessor implements MergeProcessor {
             file = {
                 contents: file.toString(),
                 name: fileName,
-                path: "",
+                path: process.cwd(),
                 size: file.toString().length,
             };
         }
@@ -119,25 +119,36 @@ export class DtsProcessor implements MergeProcessor {
     }
 
     /**
-     * Merges the input declaration file of this object, returning an asynchronous promise with the
-     * resulting data as an object.
+     * Merges the input declaration file of this object, returning the merged file as result.
      *
      * @return
-     *   A promise containing the {@link File} result of the merging, on success.
+     *   A file object, containing the results of the merging and all attributes pertaining to it,
+     *   or null if the file contains no mergeable declarations.
      */
-    public async merge() {
+    public merge(): File {
 
         const filePath = this._file.path + "/" + this._file.name;
         this._log(`Initializing merging of file '${filePath}'`);
 
         const declarations = this._getDeclarations();
+
+        if (declarations.length === 0) {
+            this._log(`'${filePath}' has 0 mergeable declarations`);
+            const clone = Object.assign({}, this._file);
+
+            const extension = this._context.options.extensionPrefix;
+            clone.name = this._file.name.replace(".d.ts", `.${extension}.d.ts`);
+
+            return clone;
+        }
+
         const organizedDeclarations = this._organizeDeclarations(declarations);
 
         const length1 = declarations.length;
         const length2 = getDictionaryLength(organizedDeclarations);
         this._log(`Total declaration merges for '${filePath}': ${length2} (from ${length1})`);
 
-        return await this._mergeDeclarations(organizedDeclarations);
+        return this._mergeDeclarations(organizedDeclarations);
     }
 
     // Gets the declarations based on the constant regex, resulting in a linear array
@@ -207,9 +218,11 @@ export class DtsProcessor implements MergeProcessor {
             }
         }
 
+        const extension = `.${this._context.options.extensionPrefix}.d.ts`;
+
         return {
             contents: data,
-            name: this._file.name.replace(".d.ts", ".merged.d.ts"),
+            name: this._file.name.replace(".d.ts", extension),
             path: this._file.path,
             source: this._file.source,
         };

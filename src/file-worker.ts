@@ -4,10 +4,14 @@ import path = require("path");
 
 import {DtsProcessor} from "./dts-processor";
 import {JsProcessor} from "./js-processor";
-import {File, LogLevel, MergeContext} from "./utils";
+import {File, LogLevel, MergeContext, Timer} from "./utils";
 
 /**
- * Represents worker objects that are able to control merging processors for multiple files.
+ * Represents worker objects that are able to control merging processors for multiple files,
+ * scripts and declarations alike.
+ *
+ * Using this object is probably the best way to work with multiple file mergings while avoiding
+ * clogging Node's heap due to the heavy nature of this plugin.
  */
 export class FileWorker {
 
@@ -15,19 +19,26 @@ export class FileWorker {
     private _dtsList: Array<string | File> = [];
     private _jsList: Array<string | File> = [];
     private _skipped: File[] = [];
+    private _timer: Timer;
 
-    /** Gets the declaration (d.ts) files to be merged. */
+    /** Gets the declaration (d.ts) file array to be merged. */
     public get dtsList(): ReadonlyArray<string | File> { return this._dtsList; }
 
-    /** Gets the javascript (.js) files to be merged. */
+    /** Gets the javascript (.js) file array to be merged. */
     public get jsList(): ReadonlyArray<string | File> { return this._jsList; }
 
-    /** Gets the javascript (.js) files to be merged. */
-    public get skipped() { return this._skipped; }
+    /**
+     * Gets an array with the files that were not saved during {@link write} because their name
+     * and/or path were not specified.
+     */
+    public get unsaved() { return this._skipped; }
+
+    /** Gets the timer object that keeps track of the time spent while working. */
+    public get timer() { return this._timer; }
 
     /**
-     * Initializes a new instance of the {@link FileWorker} class, using the given context or
-     * creating one.
+     * Initializes a new instance of the {@link FileWorker} class, using the given context object or
+     * creating one with the default options.
      *
      * @param context
      *   Context object to be used throughout merging operations.
@@ -58,6 +69,28 @@ export class FileWorker {
     }
 
     /**
+     * Adds a single file to the worker object.
+     *
+     * @param filePath
+     *   String with the path to the file to be added.
+     */
+    public addFile(filePath: string) {
+
+        const cwd = process.cwd();
+        filePath = path.relative(cwd, filePath);
+
+        if (filePath.substr(filePath.length - 4, 4).toLowerCase() === "d.ts") {
+            this.addDts(filePath);
+            return;
+        }
+
+        if (path.extname(filePath).toLowerCase() === ".js") {
+            this.addJs(filePath);
+            return;
+        }
+    }
+
+    /**
      * Adds all files that matches the given glob patterns.
      *
      * @param callback
@@ -68,13 +101,14 @@ export class FileWorker {
     public addGlobPatterns(callback: () => void, patterns: string[]) {
 
         let count = 0;
+        const ignored = `**/*.${this._context.options.extensionPrefix}.*`;
         const workingDir = process.cwd();
 
         for (const pattern of patterns) {
             glob(
                 pattern,
                 {
-                    ignore: "**/*.merged.*",
+                    ignore: ignored,
                     root: workingDir,
                 },
                 (error: Error | null, files: string[]) => {
@@ -126,18 +160,103 @@ export class FileWorker {
     }
 
     /**
-     * Performs the processing of all the files in the file worker queue, and saves the files
-     * according to the output options.
+     * Performs the processing of all the files in the file worker queue, and retrieves the
+     * resulting files through the asynchronous callback.
      *
      * @param callback
-     *   A function to be called once the work and saving is done.
+     *   A function to be called once the work is done.
+     */
+    public work(callback: (files: File[]) => void) {
+
+        const files: File[] = [];
+
+        this._prepareWork(
+            file => {
+                if (!(file instanceof Array)) {
+                    file = [file];
+                }
+
+                files.push.apply(files, file);
+            },
+            () => {
+                callback(files);
+            },
+        );
+    }
+
+    /**
+     * @deprecated
+     * @see {work}
      */
     public workAndSave(callback?: () => void) {
+        this.work(files => {
+            this.write(files);
 
-        this._prepareWork(file => {
+            if (callback) {
+                callback();
+            }
+        });
+    }
 
-            this._write(file);
-        }, callback);
+    /**
+     * Performs the processing of all the files in the file worker queue, and retrieves the
+     * resulting files synchronously.
+     *
+     * @param callback
+     *   A function to be called once the work is done.
+     */
+    public workSync() {
+
+        const files: File[] = [];
+        let done = false;
+
+        this._prepareWork(
+            file => {
+                files.push.apply(files, file);
+            },
+            () => {
+                done = true;
+            },
+        );
+
+        while (!done) {}
+
+        return files;
+    }
+
+    /**
+     * Writes the given file list to the disk.
+     *
+     * @param files
+     *   A string or array of string with the files to be writen.
+     */
+    public write(files: File | File[]) {
+
+        if (!(files instanceof Array)) {
+            files = [files];
+        }
+
+        for (const file of files) {
+
+            if (!file.name) {
+                this._skipped.push(file);
+                continue;
+            }
+
+            const filePath = file.path + "/" + file.name;
+
+            if (file.source) {
+
+                const sourceSize = file.source.size;
+                this._context.log(`${filePath}: (${file.size} bytes (from ${sourceSize} bytes)).`);
+            }
+
+            if (!fs.existsSync(file.path)) {
+                fs.mkdirSync(file.path);
+            }
+
+            fs.writeFileSync(filePath, file.contents);
+        }
     }
 
     // Generator that creates the processors for each file
@@ -151,6 +270,7 @@ export class FileWorker {
         for (const jsFile of this._jsList) {
             const jsProcessor = new JsProcessor(this._read(jsFile), this._context);
             yield jsProcessor.merge();
+            yield jsProcessor.sourceMapFile;
         }
     }
 
@@ -160,34 +280,24 @@ export class FileWorker {
         doneCallback?: () => void,
     ) {
 
-        doneCallback = doneCallback || (() => {});
+        this._timer = new Timer();
 
         const workGenerator = this._doWork();
-
-        let count = 0;
         let promise = workGenerator.next();
-        let total = 0;
 
         while (!promise.done) {
 
-            promise.value
-                .then(file => {
-                    count += 1;
-                    file.size = file.contents.length;
+            if (promise.value !== null) {
+                fileCallback(promise.value);
+            }
 
-                    fileCallback(file);
-
-                    if (count === total) {
-                        (doneCallback as any)();
-                        return;
-                    }
-                })
-                .catch(error => {
-                    this._context.error(error);
-                });
-
-            total += 1;
             promise = workGenerator.next();
+        }
+
+        this._timer.end();
+
+        if (doneCallback) {
+            doneCallback();
         }
     }
 
@@ -213,31 +323,5 @@ export class FileWorker {
 
         file.contents = data;
         return file;
-    }
-
-    // Writes the merged files
-    private _write(files: File | File[]) {
-
-        if (!(files instanceof Array)) {
-            files = [files];
-        }
-
-        for (const file of files) {
-
-            if (!file.name) {
-                this._skipped.push(file);
-                continue;
-            }
-
-            const filePath = file.path + "/" + file.name;
-
-            if (file.source) {
-
-                const sourceSize = file.source.size;
-                this._context.log(`${filePath}: (${file.size} bytes (from ${sourceSize} bytes)).`);
-            }
-
-            fs.writeFileSync(filePath, file.contents);
-        }
     }
 }

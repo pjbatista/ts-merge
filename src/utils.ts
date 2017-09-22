@@ -1,21 +1,27 @@
 import gutil = require("gulp-util");
+import process = require("process");
 
 import {GenerateOptions} from "escodegen";
 import {ParseOptions} from "esprima";
 import {Statement} from "estree";
 
+// A cleanup regex to avoid invalid file name generation
+const extensionRegex = /[^a-zA-Z0-9_.\-]+/g;
+
 const generateOptions: GenerateOptions = {
     comment: true,
     format: {
         indent: { adjustMultilineComment: true },
+        preserveBlankLines: true,
     },
 };
 
 const mergeOptions: MergeOptions = {
-    logger: "none",
+    extensionPrefix: "merged",
+    logger: "console",
     skipDeclarations: false,
     skipScripts: false,
-    sourceMaps: true,
+    skipSourceMaps: false,
 };
 
 const parseOptions: ParseOptions = {
@@ -143,6 +149,9 @@ export interface File {
     /** Contents of the file. */
     contents: string;
 
+    /** Map source file path of the original (non-merged) file. */
+    mapSource?: string;
+
     /** Name of the file (with extension, without path). */
     name: string;
 
@@ -162,7 +171,7 @@ export interface File {
 export type LoggerFunction = (message: string, level?: LogLevel, newLine?: boolean) => void;
 
 /**
- * Enumerator with the log levels available.
+ * An enumerator with all possible values for logging level, which categorizes the log information.
  */
 export enum LogLevel {
     Verbose = 0,
@@ -225,7 +234,7 @@ export class MergeContext {
      */
     public constructor(options?: MergeOptions) {
 
-        options = options || mergeOptions;
+        options = extendOptions("merge", options);
         this._options = options;
 
         if (options.logger === "none") {
@@ -239,6 +248,8 @@ export class MergeContext {
         if (typeof(options.logger) === "function") {
             this._logger = options.logger;
         }
+
+        options.extensionPrefix = (options.extensionPrefix as string).replace(extensionRegex, "");
     }
 
     /**
@@ -279,25 +290,42 @@ export class MergeContext {
 }
 
 /**
- * Represents the object that contains the options that adjust the execution of the typescript-merge
- * post-processor.
+ * Represents the configuration values that changes the behavior of `ts-merge`.
+ *
+ * These options are usually parsed and encapsulated by {@link MergeContext}, and can be passed when
+ * creating a {@link FileWorker} or using the {@link streamFunction}.
  */
 export interface MergeOptions {
 
     /**
-     * Specifies the `escodegen` generate options object.
+     * Extension prefix for the merged files (default is "merged"), e.g. myfile.js will become
+     * myfile.merged.js.
+     *
+     * **Attention:** If empty, then {@link FileWorker.write} will overwrite the input files.
      */
-    escodegenOptions?: GenerateOptions;
+    extensionPrefix?: string;
 
     /**
-     * Specifies the `esprima` parse options object.
+     * ECMAScript generation options for `escodegen`. See
+     * {@link https://github.com/estools/escodegen/wiki/API} for more information.
      */
-    esprimaOptions?: ParseOptions;
+    generateOptions?: GenerateOptions;
 
     /**
-     * Specifies the logger output (none, console, or callback).
+     * The type of logging mechanism used while merging.
+     *
+     * - **none**: No output messages are created
+     * - **console** (default): Sends messages to the console / terminal
+     * - **{@link LoggerFunction}**: Sends the log the callback
      */
-    logger?: "none" | "console" | "callback" | LoggerFunction;
+    logger?: "none" | "console" | LoggerFunction;
+
+    /**
+     * ECMAScript parsing options for `esprima`. See
+     * {@link https://esprima.readthedocs.io/en/latest/syntactic-analysis.html} for more
+     * information.
+     */
+    parseOptions?: ParseOptions;
 
     /**
      * Whether to skip the merging of declaration (.d.ts files) 'namespaces' or not.
@@ -310,9 +338,9 @@ export interface MergeOptions {
     skipScripts?: boolean;
 
     /**
-     * Whether to fix sourcemaps (.js.map files) or not (**experimental**).
+     * Whether to skip sourcemap generation (.js.map files) or not.
      */
-    sourceMaps?: boolean;
+    skipSourceMaps?: boolean;
 }
 
 /**
@@ -335,7 +363,74 @@ export declare class MergeProcessor {
      * Merges the namespaces of the current file.
      *
      * @return
-     *   A promise that when sucessful will retrieve the merged data as a string.
+     *   A file object with the merged data.
      */
-    public merge(): Promise<File>;
+    public merge(): File;
+}
+
+/**
+ * An object that uses Node.JS process.hrtime method to count timespans with nanosecond precision.
+ */
+export class Timer {
+
+    private _end: number | undefined;
+    private _start: number;
+
+    /**
+     * Gets the number of nanoseconds that were spent between the object's creation and the call to
+     * the {@link end} method.
+     */
+    public get totalNanoSeconds() {
+
+        if (!this._end) { return NaN; }
+        return this._end - this._start;
+    }
+
+    /**
+     * Initializes a new instance of the {@link Timer} class, starting to count the nanoseconds.
+     */
+    public constructor() {
+
+        const ns = process.hrtime();
+        this._start = ns[0] * 1000000000 + ns[1];
+    }
+
+    /**
+     * Ends the timer execution, allowing the total nanoseconds to be obtained.
+     */
+    public end() {
+
+        const ns = process.hrtime();
+        this._end = ns[0] * 1000000000 + ns[1];
+    }
+
+    /**
+     * Retrieves a string with a humanized value for the timer total nanoseconds.
+     */
+    public toString() {
+
+        let value = this.totalNanoSeconds;
+        let unit = "ns";
+
+        if (isNaN(value)) {
+            return "-";
+        }
+
+        if (value > 1000) {
+            value = value / 1000;
+            unit = "μs";
+        }
+
+        if (value > 1000) {
+            value = value / 1000;
+            unit = "ms";
+        }
+
+        if (value > 1000) {
+            value = value / 1000;
+            unit = "s";
+        }
+
+        return `${value.toPrecision(4)} ${unit}`;
+    }
 }

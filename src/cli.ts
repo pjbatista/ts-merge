@@ -16,7 +16,8 @@ export class CliApplication {
     private _options: MergeOptions;
 
     /**
-     * Initializes a new instance of the {@link CliApplication} class.
+     * Initializes a new instance of the {@link CliApplication} class, parsing the options, creating
+     * the context and running the merger.
      */
     public constructor() {
 
@@ -38,14 +39,15 @@ export class CliApplication {
     // Shows usage help message
     private _help() {
 
-        ts.sys.write("Usage: ts-merge [options] pattern0 pattern1 ... patternN\n");
-        ts.sys.write("\n");
+        ts.sys.write("Usage: ts-merge pattern0 [pattern1 ... patternN] [options]\n\n");
+        ts.sys.write("pattern0...patternN: glob patterns with the files to be merged\n\n");
         ts.sys.write("[options]: change the behavior of ts-merge:\n");
         ts.sys.write("  --help                          Displays this usage message\n");
+        ts.sys.write("  --extensionPrefix (merged)      Sets extension prefix for output files\n");
         ts.sys.write("  --logger none|(console)|file    Sets the logger type\n");
-        ts.sys.write("  --skipDeclarations              Do not parse d.ts files\n");
-        ts.sys.write("  --skipScripts                   Do not parse .js files\n");
-        ts.sys.write("  --sourceMaps (true)|false       Controls generation of .map files\n");
+        ts.sys.write("  --skipDeclarations | -D         Do not parse .d.ts files\n");
+        ts.sys.write("  --skipScripts      | -S         Do not parse .js files\n");
+        ts.sys.write("  --skipSourceMaps   | -M         Prevents generation of .map files\n");
     }
 
     // Parses options given through command-line
@@ -53,12 +55,15 @@ export class CliApplication {
 
         const options: MergeOptions = {};
 
-        options.logger = args.logger || "console";
+        const ext = typeof(args.extensionPrefix) === "string" ? args.extensionPrefix : undefined;
+        options.extensionPrefix = typeof(ext) === "string" ? ext : "merged";
+
+        const logger = typeof(args.logger) === "string" ? args.logger : undefined;
+        options.logger = logger || "console";
+
         options.skipDeclarations = !!(args.skipDeclarations || args.D);
         options.skipScripts = !!(args.skipScripts || args.S);
-
-        const sourceMaps = args.sourceMaps || args.M;
-        options.sourceMaps = typeof(sourceMaps) === "undefined" ? true : sourceMaps;
+        options.skipSourceMaps = !!(args.skipSourceMaps || args.M);
 
         return options;
     }
@@ -68,10 +73,13 @@ export class CliApplication {
 
         this._fileWorker.addGlobPatterns(() => {
 
-            this._fileWorker.workAndSave(() => {
-                this._context.log("All files processed.");
+            this._fileWorker.work(files => {
+                this._fileWorker.write(files);
 
-                const skipped = this._fileWorker.skipped.length;
+                const time = this._fileWorker.timer.toString();
+                this._context.log(`Files processed in ${time}`);
+
+                const skipped = this._fileWorker.unsaved.length;
 
                 if (skipped === 0) {
                     return;

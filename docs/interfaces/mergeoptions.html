@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -69,9 +67,10 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Represents the object that contains the options that adjust the execution of the typescript-merge
-						post-processor.</p>
+						<p>Represents the configuration values that changes the behavior of <code>ts-merge</code>.</p>
 					</div>
+					<p>These options are usually parsed and encapsulated by <a href="../classes/mergecontext.html">MergeContext</a>, and can be passed when
+					creating a <a href="../classes/fileworker.html">FileWorker</a> or using the <a href="../globals.html#streamfunction">streamFunction</a>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -89,12 +88,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#escodegenoptions" class="tsd-kind-icon">escodegen<wbr>Options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#esprimaoptions" class="tsd-kind-icon">esprima<wbr>Options</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#extensionprefix" class="tsd-kind-icon">extension<wbr>Prefix</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#parseoptions" class="tsd-kind-icon">parse<wbr>Options</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#skipdeclarations" class="tsd-kind-icon">skip<wbr>Declarations</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#skipscripts" class="tsd-kind-icon">skip<wbr>Scripts</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#sourcemaps" class="tsd-kind-icon">source<wbr>Maps</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="mergeoptions.html#skipsourcemaps" class="tsd-kind-icon">skip<wbr>Source<wbr>Maps</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,47 +103,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="escodegenoptions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> escodegen<wbr>Options</h3>
-					<div class="tsd-signature tsd-kind-icon">escodegen<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GenerateOptions</span></div>
+					<a name="extensionprefix" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> extension<wbr>Prefix</h3>
+					<div class="tsd-signature tsd-kind-icon">extension<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L290">utils.ts:290</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L306">utils.ts:306</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Specifies the <code>escodegen</code> generate options object.</p>
+							<p>Extension prefix for the merged files (default is &quot;merged&quot;), e.g. myfile.js will become
+							myfile.merged.js.</p>
 						</div>
+						<p><strong>Attention:</strong> If empty, then <a href="../classes/fileworker.html#write">FileWorker.write</a> will overwrite the input files.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="esprimaoptions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> esprima<wbr>Options</h3>
-					<div class="tsd-signature tsd-kind-icon">esprima<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ParseOptions</span></div>
+					<a name="generateoptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> generate<wbr>Options</h3>
+					<div class="tsd-signature tsd-kind-icon">generate<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GenerateOptions</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L295">utils.ts:295</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L312">utils.ts:312</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Specifies the <code>esprima</code> parse options object.</p>
+							<p>ECMAScript generation options for <code>escodegen</code>. See
+							<a href="https://github.com/estools/escodegen/wiki/API" class="external">https://github.com/estools/escodegen/wiki/API</a> for more information.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="logger" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> logger</h3>
-					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"console"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"callback"</span><span class="tsd-signature-symbol"> | </span><a href="../globals.html#loggerfunction" class="tsd-signature-type">LoggerFunction</a></div>
+					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"none"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"console"</span><span class="tsd-signature-symbol"> | </span><a href="../globals.html#loggerfunction" class="tsd-signature-type">LoggerFunction</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L300">utils.ts:300</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L321">utils.ts:321</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Specifies the logger output (none, console, or callback).</p>
+							<p>The type of logging mechanism used while merging.</p>
+						</div>
+						<ul>
+							<li><strong>none</strong>: No output messages are created</li>
+							<li><strong>console</strong> (default): Sends messages to the console / terminal</li>
+							<li><strong><a href="../globals.html#loggerfunction">LoggerFunction</a></strong>: Sends the log the callback</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="parseoptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> parse<wbr>Options</h3>
+					<div class="tsd-signature tsd-kind-icon">parse<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ParseOptions</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L328">utils.ts:328</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>ECMAScript parsing options for <code>esprima</code>. See
+								<a href="https://esprima.readthedocs.io/en/latest/syntactic-analysis.html" class="external">https://esprima.readthedocs.io/en/latest/syntactic-analysis.html</a> for more
+							information.</p>
 						</div>
 					</div>
 				</section>
@@ -153,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">skip<wbr>Declarations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L305">utils.ts:305</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L333">utils.ts:333</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -168,7 +193,7 @@
 					<div class="tsd-signature tsd-kind-icon">skip<wbr>Scripts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L310">utils.ts:310</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L338">utils.ts:338</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -178,17 +203,17 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sourcemaps" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> source<wbr>Maps</h3>
-					<div class="tsd-signature tsd-kind-icon">source<wbr>Maps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<a name="skipsourcemaps" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> skip<wbr>Source<wbr>Maps</h3>
+					<div class="tsd-signature tsd-kind-icon">skip<wbr>Source<wbr>Maps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L315">utils.ts:315</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L343">utils.ts:343</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Whether to fix sourcemaps (.js.map files) or not (<strong>experimental</strong>).</p>
+							<p>Whether to skip sourcemap generation (.js.map files) or not.</p>
 						</div>
 					</div>
 				</section>
@@ -225,6 +250,9 @@
 					<li class=" tsd-kind-class">
 						<a href="../classes/mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="../classes/timer.html" class="tsd-kind-icon">Timer</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="declaration.html" class="tsd-kind-icon">Declaration</a>
 					</li>
@@ -240,13 +268,16 @@
 						<a href="mergeoptions.html" class="tsd-kind-icon">Merge<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mergeoptions.html#escodegenoptions" class="tsd-kind-icon">escodegen<wbr>Options</a>
+								<a href="mergeoptions.html#extensionprefix" class="tsd-kind-icon">extension<wbr>Prefix</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mergeoptions.html#esprimaoptions" class="tsd-kind-icon">esprima<wbr>Options</a>
+								<a href="mergeoptions.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="mergeoptions.html#logger" class="tsd-kind-icon">logger</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="mergeoptions.html#parseoptions" class="tsd-kind-icon">parse<wbr>Options</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="mergeoptions.html#skipdeclarations" class="tsd-kind-icon">skip<wbr>Declarations</a>
@@ -255,7 +286,7 @@
 								<a href="mergeoptions.html#skipscripts" class="tsd-kind-icon">skip<wbr>Scripts</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="mergeoptions.html#sourcemaps" class="tsd-kind-icon">source<wbr>Maps</a>
+								<a href="mergeoptions.html#skipsourcemaps" class="tsd-kind-icon">skip<wbr>Source<wbr>Maps</a>
 							</li>
 						</ul>
 					</li>
@@ -277,13 +308,28 @@
 						<a href="../globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#context" class="tsd-kind-icon">context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="../globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="../globals.html#threshold" class="tsd-kind-icon">threshold</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-not-exported">
 						<a href="../globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>
@@ -296,6 +342,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
 						<a href="../globals.html#nonelogger" class="tsd-kind-icon">none<wbr>Logger</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="../globals.html#parsefile" class="tsd-kind-icon">parse<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-is-not-exported">
 						<a href="../globals.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a>

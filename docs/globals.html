@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -82,6 +80,7 @@
 								<li class="tsd-kind-class"><a href="classes/jsprocessor.html" class="tsd-kind-icon">Js<wbr>Processor</a></li>
 								<li class="tsd-kind-class"><a href="classes/mergecontext.html" class="tsd-kind-icon">Merge<wbr>Context</a></li>
 								<li class="tsd-kind-class"><a href="classes/mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a></li>
+								<li class="tsd-kind-class"><a href="classes/timer.html" class="tsd-kind-icon">Timer</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -106,7 +105,11 @@
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#additionalname" class="tsd-kind-icon">additional<wbr>Name</a></li>
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#additionalregex" class="tsd-kind-icon">additional<wbr>Regex</a></li>
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a></li>
+								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#context" class="tsd-kind-icon">context</a></li>
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a></li>
+								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a></li>
+								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a></li>
+								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a></li>
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#threshold" class="tsd-kind-icon">threshold</a></li>
 							</ul>
 						</section>
@@ -114,10 +117,13 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-has-type-parameter tsd-is-not-exported"><a href="globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a></li>
+								<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter tsd-is-not-exported"><a href="globals.html#getdictionarylength" class="tsd-kind-icon">get<wbr>Dictionary<wbr>Length</a></li>
 								<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#joindeclarations" class="tsd-kind-icon">join<wbr>Declarations</a></li>
 								<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#nonelogger" class="tsd-kind-icon">none<wbr>Logger</a></li>
+								<li class="tsd-kind-function tsd-is-not-exported"><a href="globals.html#parsefile" class="tsd-kind-icon">parse<wbr>File</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-not-exported">
@@ -139,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">Logger<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L162">utils.ts:162</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L171">utils.ts:171</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -184,7 +190,7 @@
 					<div class="tsd-signature tsd-kind-icon">additional<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"__additionalDeclaration"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;__additionalDeclaration&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L3">dts-processor.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L3">dts-processor.ts:3</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -194,7 +200,7 @@
 					<div class="tsd-signature tsd-kind-icon">additional<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/__additionalDeclaration[0-9]+/i</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L4">dts-processor.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L4">dts-processor.ts:4</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -204,7 +210,7 @@
 					<div class="tsd-signature tsd-kind-icon">console<wbr>Logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;((message: string, level: LogLevel &#x3D; LogLevel.Information) &#x3D;&gt; {if (level &#x3D;&#x3D;&#x3D; LogLevel.Verbose) {return;}let color &#x3D; gutil.colors.reset;let expose &#x3D; true;switch (level) {case LogLevel.Error:color &#x3D; gutil.colors.red;break;case LogLevel.Warning:color &#x3D; gutil.colors.yellow;break;default:expose &#x3D; false;break;}const levelLog &#x3D; expose ? color(LogLevel[level]) + &quot;: &quot; : &quot;&quot;;gutil.log(levelLog + message);}) as LoggerFunction</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L28">utils.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L34">utils.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -236,12 +242,52 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
+					<a name="context" class="tsd-anchor"></a>
+					<h3>context</h3>
+					<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span> <a href="classes/mergecontext.html" class="tsd-signature-type">MergeContext</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in stream.ts:7</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
 					<a name="declarationregex" class="tsd-anchor"></a>
 					<h3>declaration<wbr>Regex</h3>
 					<div class="tsd-signature tsd-kind-icon">declaration<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/^(.*?)declare (namespace) (.*?){/gim</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L8">dts-processor.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L8">dts-processor.ts:8</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
+					<a name="extensionregex" class="tsd-anchor"></a>
+					<h3>extension<wbr>Regex</h3>
+					<div class="tsd-signature tsd-kind-icon">extension<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/[^a-zA-Z0-9_.\-]+/g</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L9">utils.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
+					<a name="fileworker" class="tsd-anchor"></a>
+					<h3>file<wbr>Worker</h3>
+					<div class="tsd-signature tsd-kind-icon">file<wbr>Worker<span class="tsd-signature-symbol">:</span> <a href="classes/fileworker.html" class="tsd-signature-type">FileWorker</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in stream.ts:8</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
+					<a name="sourcemapcommentregex" class="tsd-anchor"></a>
+					<h3>source<wbr>Map<wbr>Comment<wbr>Regex</h3>
+					<div class="tsd-signature tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;/(\/\/# sourceMappingURL&#x3D;.*)$/m</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/js-processor.ts#L9">js-processor.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -251,7 +297,7 @@
 					<div class="tsd-signature tsd-kind-icon">threshold<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">3</span><span class="tsd-signature-symbol"> =&nbsp;3</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L5">dts-processor.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L5">dts-processor.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -268,7 +314,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L10">dts-processor.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L10">dts-processor.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -296,6 +342,29 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
+					<a name="domerge" class="tsd-anchor"></a>
+					<h3>do<wbr>Merge</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">do<wbr>Merge<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MapStream</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in stream.ts:10</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <span class="tsd-signature-type">MapStream</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
 					<a name="extendoptions" class="tsd-anchor"></a>
 					<h3>extend<wbr>Options</h3>
@@ -306,7 +375,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L69">utils.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L75">utils.ts:75</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -354,7 +423,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L27">dts-processor.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L27">dts-processor.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -383,7 +452,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/dts-processor.ts#L42">dts-processor.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/dts-processor.ts#L42">dts-processor.ts:42</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -409,7 +478,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L54">utils.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L60">utils.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -422,6 +491,75 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-not-exported">
+					<a name="parsefile" class="tsd-anchor"></a>
+					<h3>parse<wbr>File</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>File<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">File</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in stream.ts:30</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>file: <span class="tsd-signature-type">File</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="streamfunction" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagExport assignment">Export assignment</span> stream<wbr>Function</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">stream<wbr>Function<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="interfaces/mergeoptions.html" class="tsd-signature-type">MergeOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadWriteStream</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in stream.ts:56</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This is a function that wraps the TypeScript Merger functionality into Node.JS streams, and is
+									useful when the merging needs to be streamed in a pipeline.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><p>Using tsmerge with gulp</p>
+										<pre><code class="lang-javascript"><span class="hljs-comment">// Both ways are correct to import the stream worker:</span>
+<span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ts-merge/stream'</span>);
+<span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">'ts-merge'</span>).streamFunction;
+
+gulp.task(<span class="hljs-string">'merge'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  gulp
+    .src([<span class="hljs-string">'*.ts'</span>, <span class="hljs-string">'*.d.ts'</span>])
+    .pipe(tsmerge({ <span class="hljs-attr">extensionPrefix</span>: <span class="hljs-string">'compact'</span> }))
+    .pipe(gulp.dest(<span class="hljs-string">'.'</span>));
+});
+</code></pre>
+										<p>For more information, see <a href="interfaces/mergeoptions.html">MergeOptions</a>.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="interfaces/mergeoptions.html" class="tsd-signature-type">MergeOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadWriteStream</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Object literals</h2>
@@ -431,7 +569,7 @@
 					<div class="tsd-signature tsd-kind-icon">generate<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L7">utils.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L11">utils.ts:11</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -440,7 +578,7 @@
 						<div class="tsd-signature tsd-kind-icon">comment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L8">utils.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L12">utils.ts:12</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -450,16 +588,26 @@
 						<div class="tsd-signature tsd-kind-icon">format<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L9">utils.ts:9</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L13">utils.ts:13</a></li>
 							</ul>
 						</aside>
+						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
+							<a name="generateoptions.format.preserveblanklines" class="tsd-anchor"></a>
+							<h3>preserve<wbr>Blank<wbr>Lines</h3>
+							<div class="tsd-signature tsd-kind-icon">preserve<wbr>Blank<wbr>Lines<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L15">utils.ts:15</a></li>
+								</ul>
+							</aside>
+						</section>
 						<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal tsd-is-not-exported">
 							<a name="generateoptions.format.indent" class="tsd-anchor"></a>
 							<h3>indent</h3>
 							<div class="tsd-signature tsd-kind-icon">indent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L10">utils.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L14">utils.ts:14</a></li>
 								</ul>
 							</aside>
 							<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -468,7 +616,7 @@
 								<div class="tsd-signature tsd-kind-icon">adjust<wbr>Multiline<wbr>Comment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L10">utils.ts:10</a></li>
+										<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L14">utils.ts:14</a></li>
 									</ul>
 								</aside>
 							</section>
@@ -481,16 +629,26 @@
 					<div class="tsd-signature tsd-kind-icon">merge<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L14">utils.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L19">utils.ts:19</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
-						<a name="mergeoptions.logger" class="tsd-anchor"></a>
-						<h3>logger</h3>
-						<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;none&quot;</span></div>
+						<a name="mergeoptions.extensionprefix" class="tsd-anchor"></a>
+						<h3>extension<wbr>Prefix</h3>
+						<div class="tsd-signature tsd-kind-icon">extension<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;merged&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L15">utils.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L20">utils.ts:20</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
+						<a name="mergeoptions.logger" class="tsd-anchor"></a>
+						<h3>logger</h3>
+						<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;console&quot;</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L21">utils.ts:21</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -500,7 +658,7 @@
 						<div class="tsd-signature tsd-kind-icon">skip<wbr>Declarations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L16">utils.ts:16</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L22">utils.ts:22</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -510,17 +668,17 @@
 						<div class="tsd-signature tsd-kind-icon">skip<wbr>Scripts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L17">utils.ts:17</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L23">utils.ts:23</a></li>
 							</ul>
 						</aside>
 					</section>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
-						<a name="mergeoptions.sourcemaps" class="tsd-anchor"></a>
-						<h3>source<wbr>Maps</h3>
-						<div class="tsd-signature tsd-kind-icon">source<wbr>Maps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+						<a name="mergeoptions.skipsourcemaps" class="tsd-anchor"></a>
+						<h3>skip<wbr>Source<wbr>Maps</h3>
+						<div class="tsd-signature tsd-kind-icon">skip<wbr>Source<wbr>Maps<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L18">utils.ts:18</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L24">utils.ts:24</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -531,7 +689,7 @@
 					<div class="tsd-signature tsd-kind-icon">parse<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L21">utils.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L27">utils.ts:27</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal tsd-is-not-exported">
@@ -540,7 +698,7 @@
 						<div class="tsd-signature tsd-kind-icon">comment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L22">utils.ts:22</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L28">utils.ts:28</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -550,7 +708,7 @@
 						<div class="tsd-signature tsd-kind-icon">loc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L23">utils.ts:23</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L29">utils.ts:29</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -560,7 +718,7 @@
 						<div class="tsd-signature tsd-kind-icon">range<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L24">utils.ts:24</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L30">utils.ts:30</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -570,7 +728,7 @@
 						<div class="tsd-signature tsd-kind-icon">tokens<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/2cde95d/src/utils.ts#L25">utils.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/7a7eb1e/src/utils.ts#L31">utils.ts:31</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -608,6 +766,9 @@
 					<li class=" tsd-kind-class">
 						<a href="classes/mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/timer.html" class="tsd-kind-icon">Timer</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/declaration.html" class="tsd-kind-icon">Declaration</a>
 					</li>
@@ -636,13 +797,28 @@
 						<a href="globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#context" class="tsd-kind-icon">context</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#threshold" class="tsd-kind-icon">threshold</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-not-exported">
 						<a href="globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>
@@ -655,6 +831,12 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
 						<a href="globals.html#nonelogger" class="tsd-kind-icon">none<wbr>Logger</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-not-exported">
+						<a href="globals.html#parsefile" class="tsd-kind-icon">parse<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a>
 					</li>
 					<li class=" tsd-kind-object-literal tsd-is-not-exported">
 						<a href="globals.html#generateoptions" class="tsd-kind-icon">generate<wbr>Options</a>
