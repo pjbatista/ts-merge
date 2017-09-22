@@ -113,6 +113,10 @@ ts-merge lib/vendor1/* lib/vendor2/*.ts --logger none
 
 ## Changelog
 
+### Version 0.2.2
+
+Removed unnecessary references to minimatch and source-map.
+
 ### Version 0.2.1
 
 Removed unnecessary reference to gulp and gulpfile.js.
