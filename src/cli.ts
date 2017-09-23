@@ -23,15 +23,20 @@ export class CliApplication {
 
         this._done = false;
         this._options = this._parseOptions(yargs.argv);
-        this._context = new MergeContext(this._options);
-
-        this._fileWorker = new FileWorker(this._context);
         this._input = yargs.argv._;
+
+        if (!!(yargs.argv.version || yargs.argv.V)) {
+            this._version();
+            return;
+        }
 
         if (yargs.argv.help || this._input.length === 0) {
             this._help();
             return;
         }
+
+        this._context = new MergeContext(this._options);
+        this._fileWorker = new FileWorker(this._context);
 
         this._run();
     }
@@ -89,5 +94,12 @@ export class CliApplication {
                     LogLevel.Verbose);
             });
         }, this._input);
+    }
+
+    // Shows app version
+    private _version() {
+
+        const pkg = require("../package.json");
+        ts.sys.write(`\nTypeScript Merger (ts-merge) Version ${pkg.version}\n`);
     }
 }

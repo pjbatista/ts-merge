@@ -119,6 +119,10 @@ ts-merge --help
 
 ## Changelog
 
+### Version 0.2.4
+
+Added `--version` option to the CLI app.
+
 ### Version 0.2.3
 
 Fixed README typos and examples.
