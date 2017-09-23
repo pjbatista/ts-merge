@@ -6,17 +6,17 @@
 
 This is a post-processor for [TypeScript](https://www.typescriptlang.org/), which allows the merging of [IIFE blocks](https://developer.mozilla.org/en-US/docs/Glossary/IIFE) in transpiled code (.js) and duplicate namespaces in declaration files (.d.ts). It is also able to re-map sources (.map) in order to debug TypeScript from merged files.
 
-It can be used through command-line, directly in code, or in stream pipelines (e.g. gulp), without the need for any additional plugins.
+ts-merge can be used via command-line, directly in code, or through stream pipelines (e.g. gulp) without the need for any additional plugins.
 
-It is based of and inspired by Till Schneidereit's [typescript-module-merger](https://github.com/tschneidereit/typescript-module-merger) and all credits for the JS merging goes to him!
+This plugin is based on and inspired by Till Schneidereit's [typescript-module-merger](https://github.com/tschneidereit/typescript-module-merger). All credits for the JS merging goes to him!
 
 ## Installation
 
-It can be installed using the node package manager of your choice (npm, yarn):
+`ts-merge` can be installed using the node package manager of your choice (npm, yarn):
 
 ### Local
 
-Local installations allow this plugin to be used on a per project basis:
+Local installations allow it to be used on a per project basis:
 
 `npm install ts-merge --save`
 
@@ -32,7 +32,7 @@ Global installations expose the **ts-merge** binary to the command-line, making 
 
 ## Usage
 
-Once is installed, `ts-merge` will be available to be used directly, via a stream pipeline or through a CLI app:
+Once installed, this package can be used in multiple ways: direct (importing and using in code), in streams (as a part of a node stream pipeline - like gulp), or in consoles/terminals as a CLI app.
 
 ### Direct
 
@@ -67,8 +67,8 @@ fileWorker.addFile("myfile.d.ts");
 fileWorker.addFile("lib/plugin.js");
 
 // Async merging and writing all files in worker
-fileWorker.work(function () {
-    fileWorker.write();
+fileWorker.work(function (files) {
+    fileWorker.write(files);
 
     // FileWorker has a nice Timer utility
     console.log(fileWorker.timer.toString()); // 315.041155 ms
@@ -76,9 +76,9 @@ fileWorker.work(function () {
 });
 ```
 
-### Stream Pipeline (gulp)
+### Streams
 
-ts-merge requires no additional plugins to be piped. All you need is to import the `streamFunction` from the stream module or from the index.
+`ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `streamFunction` from the global exports, or import the default member of `ts-merge/stream`.
 
 ```javascript
 var tsmerge = require("ts-merge/stream");
@@ -97,21 +97,31 @@ gulp.task("merge", function () {
 
 The CLI app is available globally as `ts-merge` and locally at `node_modules/.bin/ts-merge`.
 
-You can specify options using --[option]
+You can specify options using --[option-name] [option-value] modifiers.
 
 ```sh
-ts-merge out/my.js --extensionPrefix ""
+ts-merge out/my.js --extensionPrefix "" --skipSourceMaps
 # An empty extensionPrefix overwrites out/my.js
 ```
 
 The app can also be used with multiple files.
 
 ```sh
-ts-merge lib/vendor1/* lib/vendor2/*.ts --logger none
+ts-merge lib/vendor1/script1.js lib/vendor2/script2/* dist/my.js --logger none
 # Setting logger to "none" prevents log printing
 ```
 
+For more information, use --help
+
+```sh
+ts-merge --help
+```
+
 ## Changelog
+
+### Version 0.2.3
+
+Fixed README typos and examples.
 
 ### Version 0.2.2
 

@@ -68,12 +68,12 @@
 				</blockquote>
 				<h2 id="about">About</h2>
 				<p>This is a post-processor for <a href="https://www.typescriptlang.org/">TypeScript</a>, which allows the merging of <a href="https://developer.mozilla.org/en-US/docs/Glossary/IIFE">IIFE blocks</a> in transpiled code (.js) and duplicate namespaces in declaration files (.d.ts). It is also able to re-map sources (.map) in order to debug TypeScript from merged files.</p>
-				<p>It can be used through command-line, directly in code, or in stream pipelines (e.g. gulp), without the need for any additional plugins.</p>
-				<p>It is based of and inspired by Till Schneidereit&#39;s <a href="https://github.com/tschneidereit/typescript-module-merger">typescript-module-merger</a> and all credits for the JS merging goes to him!</p>
+				<p>ts-merge can be used via command-line, directly in code, or through stream pipelines (e.g. gulp) without the need for any additional plugins.</p>
+				<p>This plugin is based on and inspired by Till Schneidereit&#39;s <a href="https://github.com/tschneidereit/typescript-module-merger">typescript-module-merger</a>. All credits for the JS merging goes to him!</p>
 				<h2 id="installation">Installation</h2>
-				<p>It can be installed using the node package manager of your choice (npm, yarn):</p>
+				<p><code>ts-merge</code> can be installed using the node package manager of your choice (npm, yarn):</p>
 				<h3 id="local">Local</h3>
-				<p>Local installations allow this plugin to be used on a per project basis:</p>
+				<p>Local installations allow it to be used on a per project basis:</p>
 				<p><code>npm install ts-merge --save</code></p>
 				<p><code>yarn add ts-merge</code></p>
 				<h3 id="global">Global</h3>
@@ -81,7 +81,7 @@
 				<p><code>npm install ts-merge -g</code></p>
 				<p><code>yarn global add ts-merge</code></p>
 				<h2 id="usage">Usage</h2>
-				<p>Once is installed, <code>ts-merge</code> will be available to be used directly, via a stream pipeline or through a CLI app:</p>
+				<p>Once installed, this package can be used in multiple ways: direct (importing and using in code), in streams (as a part of a node stream pipeline - like gulp), or in consoles/terminals as a CLI app.</p>
 				<h3 id="direct">Direct</h3>
 				<p>Using ts-merge in your code is pretty straight-forward. You can use a specific processor class in order to merge a single file or the FileWorker class (have to manually read the file) to do it with multiple files at once (no manual read required).</p>
 				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>);
@@ -109,16 +109,16 @@ fileWorker.addFile(<span class="hljs-string">"myfile.d.ts"</span>);
 fileWorker.addFile(<span class="hljs-string">"lib/plugin.js"</span>);
 
 <span class="hljs-comment">// Async merging and writing all files in worker</span>
-fileWorker.work(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-    fileWorker.write();
+fileWorker.work(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">files</span>) </span>{
+    fileWorker.write(files);
 
     <span class="hljs-comment">// FileWorker has a nice Timer utility</span>
     <span class="hljs-built_in">console</span>.log(fileWorker.timer.toString()); <span class="hljs-comment">// 315.041155 ms</span>
     <span class="hljs-built_in">console</span>.log(fileWorker.timer.totalNanoSeconds); <span class="hljs-comment">// 315041155</span>
 });
 </code></pre>
-				<h3 id="stream-pipeline-gulp-">Stream Pipeline (gulp)</h3>
-				<p>ts-merge requires no additional plugins to be piped. All you need is to import the <code>streamFunction</code> from the stream module or from the index.</p>
+				<h3 id="streams">Streams</h3>
+				<p><code>ts-merge</code> requires no additional plugins to be streamlined and piped. All you need to do is to import the <code>streamFunction</code> from the global exports, or import the default member of <code>ts-merge/stream</code>.</p>
 				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge/stream"</span>);
 <span class="hljs-comment">// OR</span>
 <span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>).streamFunction;
@@ -132,15 +132,20 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 </code></pre>
 				<h3 id="command-line-interface-application">Command-line interface application</h3>
 				<p>The CLI app is available globally as <code>ts-merge</code> and locally at <code>node_modules/.bin/ts-merge</code>.</p>
-				<p>You can specify options using --[option]</p>
-				<pre><code class="lang-sh">ts-merge out/my.js --extensionPrefix <span class="hljs-string">""</span>
+				<p>You can specify options using --[option-name] [option-value] modifiers.</p>
+				<pre><code class="lang-sh">ts-merge out/my.js --extensionPrefix <span class="hljs-string">""</span> --skipSourceMaps
 <span class="hljs-comment"># An empty extensionPrefix overwrites out/my.js</span>
 </code></pre>
 				<p>The app can also be used with multiple files.</p>
-				<pre><code class="lang-sh">ts-merge lib/vendor1/* lib/vendor2/*.ts --logger none
+				<pre><code class="lang-sh">ts-merge lib/vendor1/script1.js lib/vendor2/script2/* dist/my.js --logger none
 <span class="hljs-comment"># Setting logger to "none" prevents log printing</span>
 </code></pre>
+				<p>For more information, use --help</p>
+				<pre><code class="lang-sh">ts-merge --<span class="hljs-built_in">help</span>
+</code></pre>
 				<h2 id="changelog">Changelog</h2>
+				<h3 id="version-0-2-3">Version 0.2.3</h3>
+				<p>Fixed README typos and examples.</p>
 				<h3 id="version-0-2-2">Version 0.2.2</h3>
 				<p>Removed unnecessary references to minimatch and source-map.</p>
 				<h3 id="version-0-2-1">Version 0.2.1</h3>
@@ -168,7 +173,7 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 				<h3 id="version-0-1-3-and-older">Version 0.1.3 and older</h3>
 				<p>Incomplete project commits. Mockups and initial NPM testing. Extremely unstable.</p>
 				<h2 id="credits">Credits</h2>
-				<p>Pedro Batista <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x70;&#x65;&#x64;&#x72;&#x6f;&#x62;&#97;&#x74;&#105;&#115;&#x74;&#x61;&#x40;&#109;&#121;&#x73;&#101;&#x6c;&#102;&#x2e;&#99;&#111;&#109;">&#x70;&#x65;&#x64;&#x72;&#x6f;&#x62;&#97;&#x74;&#105;&#115;&#x74;&#x61;&#x40;&#109;&#121;&#x73;&#101;&#x6c;&#102;&#x2e;&#99;&#111;&#109;</a></p>
+				<p>Pedro Batista <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x70;&#101;&#x64;&#114;&#x6f;&#x62;&#97;&#116;&#105;&#x73;&#116;&#x61;&#64;&#109;&#121;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#x6f;&#109;">&#x70;&#101;&#x64;&#114;&#x6f;&#x62;&#97;&#116;&#105;&#x73;&#116;&#x61;&#64;&#109;&#121;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#x6f;&#109;</a></p>
 				<p>This plugin would not exist were it not for <a href="https://github.com/tschneidereit/typescript-module-merger">TypeScript Module Merger, by Till Schneidereit</a>.</p>
 				<h2 id="license">License</h2>
 				<p><a href="https://github.com/pjbatista/ts-merge/blob/master/LICENSE">Apache License 2.0</a></p>
