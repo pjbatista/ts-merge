@@ -134,12 +134,16 @@ export class DtsProcessor implements MergeProcessor {
 
         if (declarations.length === 0) {
             this._log(`'${filePath}' has 0 mergeable declarations`);
-            const clone = Object.assign({}, this._file);
+            const options = Object.assign({}, this._file);
 
-            const extension = this._context.options.extensionPrefix;
-            clone.name = this._file.name.replace(".d.ts", `.${extension}.d.ts`);
+            // Creating extension string and merging consecutive dots
 
-            return clone;
+            let extension = `.${this._context.options.extensionPrefix}.d.ts`;
+            extension = extension.replace("..", ".");
+
+            options.name = this._file.name.replace(".d.ts", extension);
+
+            return options;
         }
 
         const organizedDeclarations = this._organizeDeclarations(declarations);

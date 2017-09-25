@@ -119,6 +119,10 @@ ts-merge --help
 
 ## Changelog
 
+### Version 0.2.5
+
+Fixed double-dot ("..") extensions when extensionPrefix is empty.
+
 ### Version 0.2.4
 
 Added `--version` option to the CLI app.

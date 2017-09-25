@@ -44,6 +44,7 @@ export class CliApplication {
     // Shows usage help message
     private _help() {
 
+        this._version();
         ts.sys.write("Usage: ts-merge pattern0 [pattern1 ... patternN] [options]\n\n");
         ts.sys.write("pattern0...patternN: glob patterns with the files to be merged\n\n");
         ts.sys.write("[options]: change the behavior of ts-merge:\n");
@@ -53,6 +54,7 @@ export class CliApplication {
         ts.sys.write("  --skipDeclarations | -D         Do not parse .d.ts files\n");
         ts.sys.write("  --skipScripts      | -S         Do not parse .js files\n");
         ts.sys.write("  --skipSourceMaps   | -M         Prevents generation of .map files\n");
+        ts.sys.write("  --version          | -V         Shows ts-merge version\n");
     }
 
     // Parses options given through command-line
