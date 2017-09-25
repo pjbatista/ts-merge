@@ -119,9 +119,13 @@ ts-merge --help
 
 ## Changelog
 
-### Version 0.2.5
+### Version 0.2.6
 
 Fixed double-dot ("..") extensions when extensionPrefix is empty.
+
+### Version 0.2.5
+
+<strike>Fixed double-dot ("..") extensions when extensionPrefix is empty.</strike>
 
 ### Version 0.2.4
 

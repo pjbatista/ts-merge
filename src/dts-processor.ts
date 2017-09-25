@@ -222,7 +222,8 @@ export class DtsProcessor implements MergeProcessor {
             }
         }
 
-        const extension = `.${this._context.options.extensionPrefix}.d.ts`;
+        let extension = `.${this._context.options.extensionPrefix}.d.ts`;
+        extension = extension.replace("..", ".");
 
         return {
             contents: data,
