@@ -51,21 +51,32 @@ export class FileWorker {
     /**
      * Adds a declaration (d.ts) file to the file worker object.
      *
-     * @param filePath
-     *   Path to file object to be added.
+     * @param file
+     *   Path to file or file object to be added.
      */
-    public addDts(filePath: string) {
+    public addDts(file: string | File) {
 
-        if (!fs.existsSync(filePath)) {
-            this._context.log(`File '${filePath}' does not exist. Skipping`, LogLevel.Warning);
-            return;
+        if (typeof(file) === "string") {
+            if (!fs.existsSync(file)) {
+                this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
+                return;
+            }
+
+            if (file.substr(file.length - 4, 4).toLowerCase() !== "d.ts") {
+                this._context.log(`File '${file}' extension is not d.ts`, LogLevel.Warning);
+            }
+
+            const cwd = process.cwd();
+            file = path.relative(cwd, file);
+
+            file = {
+                contents: fs.readFileSync(file).toString(),
+                name: path.basename(file),
+                path: path.dirname(file),
+            };
         }
 
-        if (filePath.substr(filePath.length - 4, 4).toLowerCase() !== "d.ts") {
-            this._context.log(`File '${filePath}' extension is not d.ts`, LogLevel.Warning);
-        }
-
-        this._dtsList.push(filePath);
+        this._dtsList.push(file);
     }
 
     /**
@@ -75,9 +86,6 @@ export class FileWorker {
      *   String with the path to the file to be added.
      */
     public addFile(filePath: string) {
-
-        const cwd = process.cwd();
-        filePath = path.relative(cwd, filePath);
 
         if (filePath.substr(filePath.length - 4, 4).toLowerCase() === "d.ts") {
             this.addDts(filePath);
@@ -142,21 +150,32 @@ export class FileWorker {
     /**
      * Adds a javascript (.js) file to the file worker object.
      *
-     * @param filePath
-     *   Path to file object to be added.
+     * @param file
+     *   Path to file or file object to be added.
      */
-    public addJs(filePath: string) {
+    public addJs(file: string | File) {
 
-        if (!fs.existsSync(filePath)) {
-            this._context.log(`File '${filePath}' does not exist. Skipping`, LogLevel.Warning);
-            return;
+        if (typeof(file) === "string") {
+            if (!fs.existsSync(file)) {
+                this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
+                return;
+            }
+
+            if (path.extname(file).toLowerCase() !== ".js") {
+                this._context.log(`File '${file}' extension is not js`, LogLevel.Warning);
+            }
+
+            const cwd = process.cwd();
+            file = path.relative(cwd, file);
+
+            file = {
+                contents: fs.readFileSync(file).toString(),
+                name: path.basename(file),
+                path: path.dirname(file),
+            };
         }
 
-        if (path.extname(filePath).toLowerCase() !== ".js") {
-            this._context.log(`File '${filePath}' extension is not js`, LogLevel.Warning);
-        }
-
-        this._jsList.push(filePath);
+        this._jsList.push(file);
     }
 
     /**
@@ -201,25 +220,32 @@ export class FileWorker {
     /**
      * Performs the processing of all the files in the file worker queue, and retrieves the
      * resulting files synchronously.
-     *
-     * @param callback
-     *   A function to be called once the work is done.
      */
     public workSync() {
 
         const files: File[] = [];
-        let done = false;
 
-        this._prepareWork(
-            file => {
-                files.push.apply(files, file);
-            },
-            () => {
-                done = true;
-            },
-        );
+        for (const dtsFile of this._dtsList) {
+            const dtsProcessor = new DtsProcessor(this._read(dtsFile), this._context);
+            const dtsResult = dtsProcessor.merge();
 
-        while (!done) {}
+            if (dtsResult !== null) {
+                files.push(dtsResult);
+            }
+        }
+
+        for (const jsFile of this._jsList) {
+            const jsProcessor = new JsProcessor(this._read(jsFile), this._context);
+            const jsResult = jsProcessor.merge();
+
+            if (jsResult !== null) {
+                files.push(jsResult);
+            }
+
+            if (jsProcessor.sourceMapFile !== null) {
+                files.push(jsProcessor.sourceMapFile);
+            }
+        }
 
         return files;
     }

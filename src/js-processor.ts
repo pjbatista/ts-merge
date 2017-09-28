@@ -53,6 +53,14 @@ export class JsProcessor implements MergeProcessor {
      */
     public constructor(file: File | string, context?: MergeContext) {
 
+        this._context = context || new MergeContext();
+        this._sourceMapFile = null;
+
+        // Preventing all initializations when skipping script processing
+        if (this._context.options.skipScripts) {
+            return;
+        }
+
         if (typeof(file) === "string") {
             JsProcessor._unnamedCount += 1;
             const fileName = "unnamed" + JsProcessor._unnamedCount.toString() + ".js";
@@ -65,11 +73,9 @@ export class JsProcessor implements MergeProcessor {
             };
         }
 
-        this._context = context || new MergeContext();
         this._file = file;
         this._originalSourceMap = null;
         this._originalSourceMapStyle = "none";
-        this._sourceMapFile = null;
     }
 
     /**
@@ -79,6 +85,15 @@ export class JsProcessor implements MergeProcessor {
      *   A file object, containing the results of the merging and all attributes pertaining to it.
      */
     public merge() {
+
+        // Preventing all merging (including source maps) when skipping script processing
+        if (this._context.options.skipScripts) {
+            return null;
+        }
+
+        if (!this._file.size) {
+            this._file.size = this._file.contents.length;
+        }
 
         const filePath = this._file.path + "/" + this._file.name;
         this._log(`Initializing merging of file '${filePath}'`);

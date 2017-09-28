@@ -119,13 +119,17 @@ ts-merge --help
 
 ## Changelog
 
-### Version 0.2.6
+### Version 0.2.7
 
-Fixed double-dot ("..") extensions when extensionPrefix is empty.
+- Fixed double-dot ("..") extensions when `extensionPrefix` is empty;
+- Fixes multiple file bindings using consecutive `streamFunction` calls;
+- Added appropriate shortcuts when initializing Processors with `skip*` options;
+- Improved unit testing (including tests for file naming and other options).
 
-### Version 0.2.5
+### Version 0.2.5 - 0.2.6
 
-<strike>Fixed double-dot ("..") extensions when extensionPrefix is empty.</strike>
+These version contain failing patches.
+- <strike>Fixed double-dot ("..") extensions when `extensionPrefix` is empty.</strike>
 
 ### Version 0.2.4
 

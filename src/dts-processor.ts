@@ -102,6 +102,13 @@ export class DtsProcessor implements MergeProcessor {
      */
     public constructor(file: File | string, context?: MergeContext) {
 
+        this._context = context || new MergeContext();
+
+        // Preventing all initializations when skipping declaration processing
+        if (this._context.options.skipDeclarations) {
+            return;
+        }
+
         if (typeof(file) === "string") {
             DtsProcessor._unnamedCount += 1;
             const fileName = "unnamed" + DtsProcessor._unnamedCount.toString() + ".d.ts";
@@ -114,7 +121,6 @@ export class DtsProcessor implements MergeProcessor {
             };
         }
 
-        this._context = context || new MergeContext();
         this._file = file;
     }
 
@@ -125,7 +131,16 @@ export class DtsProcessor implements MergeProcessor {
      *   A file object, containing the results of the merging and all attributes pertaining to it,
      *   or null if the file contains no mergeable declarations.
      */
-    public merge(): File {
+    public merge() {
+
+        // Preventing all merging when skipping declaration processing
+        if (this._context.options.skipDeclarations) {
+            return null;
+        }
+
+        if (!this._file.size) {
+            this._file.size = this._file.contents.length;
+        }
 
         const filePath = this._file.path + "/" + this._file.name;
         this._log(`Initializing merging of file '${filePath}'`);
@@ -134,16 +149,16 @@ export class DtsProcessor implements MergeProcessor {
 
         if (declarations.length === 0) {
             this._log(`'${filePath}' has 0 mergeable declarations`);
-            const options = Object.assign({}, this._file);
+            const fileCopy = Object.assign({}, this._file);
 
             // Creating extension string and merging consecutive dots
 
             let extension = `.${this._context.options.extensionPrefix}.d.ts`;
             extension = extension.replace("..", ".");
 
-            options.name = this._file.name.replace(".d.ts", extension);
+            fileCopy.name = this._file.name.replace(".d.ts", extension);
 
-            return options;
+            return fileCopy;
         }
 
         const organizedDeclarations = this._organizeDeclarations(declarations);
@@ -164,6 +179,9 @@ export class DtsProcessor implements MergeProcessor {
         let lastIndex = 0;
         let previous: Declaration = undefined as any;
         let search: RegExpExecArray | null = null;
+
+        // Identifying all declaration matches and setting previous to match the start of current
+        // declaration index minus 1 (brackets and in-betweens are parsed later)
 
         while (search = declarationRegex.exec(data)) {
 
@@ -211,10 +229,14 @@ export class DtsProcessor implements MergeProcessor {
 
             if (declarations.hasOwnProperty(declarationName)) {
 
+                // Additional declarations have their own body (do not need re-declaration)
+
                 if (additionalRegex.test(declarationName)) {
                     data += joinDeclarations(declarations[declarationName]);
                     continue;
                 }
+
+                // Adding what was removed from the original file, now wrapped by a single namespace
 
                 data += `declare namespace ${declarationName} {\n\t`;
                 data += joinDeclarations(declarations[declarationName], "\t");

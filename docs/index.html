@@ -144,10 +144,19 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 				<pre><code class="lang-sh">ts-merge --<span class="hljs-built_in">help</span>
 </code></pre>
 				<h2 id="changelog">Changelog</h2>
-				<h3 id="version-0-2-6">Version 0.2.6</h3>
-				<p>Fixed double-dot (&quot;..&quot;) extensions when extensionPrefix is empty.</p>
-				<h3 id="version-0-2-5">Version 0.2.5</h3>
-				<strike>Fixed double-dot (&quot;..&quot;) extensions when extensionPrefix is empty.</strike>
+				<h3 id="version-0-2-7">Version 0.2.7</h3>
+				<ul>
+					<li>Fixed double-dot (&quot;..&quot;) extensions when <code>extensionPrefix</code> is empty;</li>
+					<li>Fixes multiple file bindings using consecutive <code>streamFunction</code> calls;</li>
+					<li>Added appropriate shortcuts when initializing Processors with <code>skip*</code> options;</li>
+					<li>Improved unit testing (including tests for file naming and other options).</li>
+				</ul>
+				<h3 id="version-0-2-5-0-2-6">Version 0.2.5 - 0.2.6</h3>
+				<p>These version contain failing patches.</p>
+				<ul>
+					<li><strike>Fixed double-dot (&quot;..&quot;) extensions when <code>extensionPrefix</code> is empty.</strike>
+					</li>
+				</ul>
 				<h3 id="version-0-2-4">Version 0.2.4</h3>
 				<p>Added <code>--version</code> option to the CLI app.</p>
 				<h3 id="version-0-2-3">Version 0.2.3</h3>
@@ -179,7 +188,7 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 				<h3 id="version-0-1-3-and-older">Version 0.1.3 and older</h3>
 				<p>Incomplete project commits. Mockups and initial NPM testing. Extremely unstable.</p>
 				<h2 id="credits">Credits</h2>
-				<p>Pedro Batista <a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#x70;&#x65;&#100;&#114;&#x6f;&#98;&#x61;&#116;&#105;&#x73;&#x74;&#x61;&#64;&#109;&#x79;&#115;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#111;&#109;">&#x70;&#x65;&#100;&#114;&#x6f;&#98;&#x61;&#116;&#105;&#x73;&#x74;&#x61;&#64;&#109;&#x79;&#115;&#x65;&#x6c;&#x66;&#x2e;&#x63;&#111;&#109;</a></p>
+				<p>Pedro Batista <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#x70;&#x65;&#100;&#114;&#x6f;&#x62;&#x61;&#x74;&#105;&#115;&#116;&#x61;&#x40;&#x6d;&#121;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#111;&#x6d;">&#x70;&#x65;&#100;&#114;&#x6f;&#x62;&#x61;&#x74;&#105;&#115;&#116;&#x61;&#x40;&#x6d;&#121;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#111;&#x6d;</a></p>
 				<p>This plugin would not exist were it not for <a href="https://github.com/tschneidereit/typescript-module-merger">TypeScript Module Merger, by Till Schneidereit</a>.</p>
 				<h2 id="license">License</h2>
 				<p><a href="https://github.com/pjbatista/ts-merge/blob/master/LICENSE">Apache License 2.0</a></p>
@@ -247,16 +256,10 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 						<a href="globals.html#consolelogger" class="tsd-kind-icon">console<wbr>Logger</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#context" class="tsd-kind-icon">context</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#declarationregex" class="tsd-kind-icon">declaration<wbr>Regex</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#extensionregex" class="tsd-kind-icon">extension<wbr>Regex</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#fileworker" class="tsd-kind-icon">file<wbr>Worker</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#sourcemapcommentregex" class="tsd-kind-icon">source<wbr>Map<wbr>Comment<wbr>Regex</a>
@@ -268,7 +271,7 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 						<a href="globals.html#addtoarraydictionary" class="tsd-kind-icon">add<wbr>ToArray<wbr>Dictionary</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-not-exported">
-						<a href="globals.html#domerge" class="tsd-kind-icon">do<wbr>Merge</a>
+						<a href="globals.html#dowork" class="tsd-kind-icon">do<wbr>Work</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>

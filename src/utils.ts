@@ -365,7 +365,7 @@ export declare class MergeProcessor {
      * @return
      *   A file object with the merged data.
      */
-    public merge(): File;
+    public merge(): File | null;
 }
 
 /**

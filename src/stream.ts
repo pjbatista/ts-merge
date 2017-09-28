@@ -4,32 +4,33 @@ import gutil = require("gulp-util");
 import {FileWorker} from "./file-worker";
 import {MergeContext, MergeOptions} from "./utils";
 
-let context: MergeContext;
-let fileWorker: FileWorker;
+function doWork(fileWorker: FileWorker) {
 
-function doMerge(this: es.MapStream) {
+    return () => {
+        fileWorker.work(function(this: es.MapStream, files) {
 
-    fileWorker.work(files => {
+            for (const file of files) {
 
-        for (const file of files) {
+                const gulpFile = new gutil.File({
+                    base: "",
+                    contents: new Buffer(file.contents),
+                    cwd: "",
+                    path: file.name,
+                });
 
-            const gulpFile = new gutil.File({
-                base: "",
-                contents: new Buffer(file.contents),
-                cwd: "",
-                path: file.name,
-            });
+                this.emit("data", gulpFile);
+            }
 
-            this.emit("data", gulpFile);
-        }
-
-        this.emit("end");
-    });
+            this.emit("end");
+        });
+    };
 }
 
-function parseFile(file: gutil.File) {
+function parseFile(fileWorker: FileWorker) {
 
-    fileWorker.addFile(file.path);
+    return (file: gutil.File) => {
+        fileWorker.addFile(file.path);
+    };
 }
 
 /**
@@ -55,10 +56,10 @@ function parseFile(file: gutil.File) {
  */
 function streamFunction(options?: MergeOptions): NodeJS.ReadWriteStream {
 
-    context = new MergeContext(options);
-    fileWorker = new FileWorker(context);
+    const context = new MergeContext(options);
+    const fileWorker = new FileWorker(context);
 
-    return (es as any).through(parseFile, doMerge);
+    return (es as any).through(parseFile(fileWorker), doWork(fileWorker));
 }
 
 export = streamFunction;
