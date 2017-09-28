@@ -28,6 +28,7 @@
         "no-unnecessary-initializer": true,
         "no-var-keyword": true,
         "no-var-requires": false,
+        "only-arrow-functions": false,
         "unified-signatures": false,
         "variable-name": [true,
             "allow-leading-underscore",

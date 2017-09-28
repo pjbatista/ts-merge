@@ -6,8 +6,8 @@ import {MergeContext, MergeOptions} from "./utils";
 
 function doWork(fileWorker: FileWorker) {
 
-    return () => {
-        fileWorker.work(function(this: es.MapStream, files) {
+    return function(this: es.MapStream) {
+        fileWorker.work(files => {
 
             for (const file of files) {
 

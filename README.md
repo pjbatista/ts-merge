@@ -119,6 +119,10 @@ ts-merge --help
 
 ## Changelog
 
+### Version 0.2.8
+
+Fixed a bug when calling `streamFunction` from gulp.
+
 ### Version 0.2.7
 
 - Fixed double-dot ("..") extensions when `extensionPrefix` is empty;
