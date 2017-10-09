@@ -1,6 +1,6 @@
 # ts-merge
 
-> Merge definitions of transpiled namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)
+> Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)
 
 ## About
 
@@ -36,16 +36,16 @@ Once installed, this package can be used in multiple ways: direct (importing and
 
 ### Direct
 
-Using ts-merge in your code is pretty straight-forward. You can use a specific processor class in order to merge a single file or the FileWorker class (have to manually read the file) to do it with multiple files at once (no manual read required).
+Using ts-merge in your code is pretty straight-forward. You can use a specific processor class in order to merge a single file or use the FileWorker class merge multiple files at once.
 
 ```javascript
 var tsmerge = require("ts-merge");
 
-var myData = fs.readFileSync("myfile.js");
-var myProcessor = new tsmerge.JsProcessor(myData);
-var mergedData = myProcessor.merge();
+var worker = new tsmerge.FileWorker();
+worker.addFile("myfile.js");
 
-fs.writeFileSync("myfile.merged.js");
+var mergedFiles = worker.workSync();
+worker.write(mergedFiles);
 ```
 
 ---
@@ -53,9 +53,32 @@ fs.writeFileSync("myfile.merged.js");
 ```javascript
 var tsmerge = require("ts-merge");
 
-// Creating a context in order to pass some options
+var dtsData = fs.readFileSync("myfile.d.ts");
+var jsData = fs.readFileSync("myfile.js");
+
+// Processors read data, not filenames
+var dtsProcessor = new tsmerge.DtsProcessor(dtsData);
+var jsProcessor = new tsmerge.JsProcessor(jsData);
+
+dtsData = dtsProcessor.merge();
+jsData = jsProcessor.merge();
+
+// The following will overwrite the original files
+fs.writeFileSync("myfile.d.ts", dtsData);
+fs.writeFileSync("myfile.js", jsData);
+```
+
+---
+
+```javascript
+var tsmerge = require("ts-merge");
+
+// Creating a MergeContext in order to pass some options
 var context = new tsmerge.MergeContext({
+    // Making myfile.* merge into myfile.clean.*:
     extensionPrefix: "clean",
+
+    // Defining a custom logger
     logger: function(msg, level) {
         mylogger(msg, level);
     }
@@ -66,29 +89,33 @@ fileWorker.addFile("myfile.js");
 fileWorker.addFile("myfile.d.ts");
 fileWorker.addFile("lib/plugin.js");
 
-// Async merging and writing all files in worker
+// Async merging...
 fileWorker.work(function (files) {
+
+    //...and then writing of the merged files
     fileWorker.write(files);
 
+    // Output: myfile.clean.js, myfile.clean.d.ts, lib/plugin.clean.js
+    // Also: *.clean.js.map if there are valid *.js.map files
+
     // FileWorker has a nice Timer utility
-    console.log(fileWorker.timer.toString()); // 315.041155 ms
+    console.log(fileWorker.timer.toString()); // 315.04 ms
     console.log(fileWorker.timer.totalNanoSeconds); // 315041155
 });
 ```
 
-### Streams
+### Streams (gulp)
 
-`ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `streamFunction` from the global exports, or import the default member of `ts-merge/stream`.
+`ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `streamFunction` from the global exports.
 
 ```javascript
-var tsmerge = require("ts-merge/stream");
-// OR
+
 var tsmerge = require("ts-merge").streamFunction;
 
 gulp.task("merge", function () {
 
     return gulp.src("dist/**/*")
-        .pipe(tsmerge({ sourceMaps: false }))
+        .pipe(tsmerge({ skipSourceMaps: true }))
         .pipe(gulp.dest("."));
 });
 ```
@@ -108,16 +135,20 @@ The app can also be used with multiple files.
 
 ```sh
 ts-merge lib/vendor1/script1.js lib/vendor2/script2/* dist/my.js --logger none
-# Setting logger to "none" prevents log printing
+# Setting logger to "none" prevents any sort of printing
 ```
 
-For more information, use --help
+For more information, use the --help option
 
 ```sh
 ts-merge --help
 ```
 
 ## Changelog
+
+### Version 0.2.9
+
+Fixed README examples and text.
 
 ### Version 0.2.8
 
