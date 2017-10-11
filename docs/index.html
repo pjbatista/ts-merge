@@ -168,55 +168,9 @@ gulp.task(<span class="hljs-string">"merge"</span>, <span class="hljs-function">
 				<pre><code class="lang-sh">ts-merge --<span class="hljs-built_in">help</span>
 </code></pre>
 				<h2 id="changelog">Changelog</h2>
-				<h3 id="version-0-2-9">Version 0.2.9</h3>
-				<p>Fixed README examples and text.</p>
-				<h3 id="version-0-2-8">Version 0.2.8</h3>
-				<p>Fixed a bug when calling <code>streamFunction</code> from gulp.</p>
-				<h3 id="version-0-2-7">Version 0.2.7</h3>
-				<ul>
-					<li>Fixed double-dot (&quot;..&quot;) extensions when <code>extensionPrefix</code> is empty;</li>
-					<li>Fixes multiple file bindings using consecutive <code>streamFunction</code> calls;</li>
-					<li>Added appropriate shortcuts when initializing Processors with <code>skip*</code> options;</li>
-					<li>Improved unit testing (including tests for file naming and other options).</li>
-				</ul>
-				<h3 id="version-0-2-5-0-2-6">Version 0.2.5 - 0.2.6</h3>
-				<p>These version contain failing patches.</p>
-				<ul>
-					<li><strike>Fixed double-dot (&quot;..&quot;) extensions when <code>extensionPrefix</code> is empty.</strike>
-					</li>
-				</ul>
-				<h3 id="version-0-2-4">Version 0.2.4</h3>
-				<p>Added <code>--version</code> option to the CLI app.</p>
-				<h3 id="version-0-2-3">Version 0.2.3</h3>
-				<p>Fixed README typos and examples.</p>
-				<h3 id="version-0-2-2">Version 0.2.2</h3>
-				<p>Removed unnecessary references to minimatch and source-map.</p>
-				<h3 id="version-0-2-1">Version 0.2.1</h3>
-				<p>Removed unnecessary reference to gulp and gulpfile.js.</p>
-				<h3 id="version-0-2-0">Version 0.2.0</h3>
-				<blockquote>
-					<p>First version with all features, documentation, and unit testing</p>
-				</blockquote>
-				<ul>
-					<li>Added a better text to the README (aka this thing you&#39;re reading);</li>
-					<li>Renamed the <code>sourceMaps</code> option to <code>skipSourceMaps</code>, and adjusted its behavior appropriately;</li>
-					<li>All options are coded in context, cli, processors and workers;</li>
-					<li>Added <code>ts-merge/stream</code> module with the default export <code>streamFunction</code>;</li>
-					<li>Added missing type exports on index.</li>
-				</ul>
-				<h3 id="version-0-1-5">Version 0.1.5</h3>
-				<ul>
-					<li>FileWorker.workAndSave has been <strong>deprecated</strong>;</li>
-					<li>FileWorker no longer exceeds Node.JS heap limit when dealing with multiple large files;</li>
-				</ul>
-				<h3 id="version-0-1-4">Version 0.1.4</h3>
-				<ul>
-					<li>Removed the necessity for <code>typescript-module-merger</code> as its functionality was fully embedded in ts-merge.</li>
-				</ul>
-				<h3 id="version-0-1-3-and-older">Version 0.1.3 and older</h3>
-				<p>Incomplete project commits. Mockups and initial NPM testing. Extremely unstable.</p>
+				<p>See <a href="https://github.com/pjbatista/ts-merge/blob/master/CHANGES.md">CHANGES.md</a></p>
 				<h2 id="credits">Credits</h2>
-				<p>Pedro Batista <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#58;&#x70;&#x65;&#100;&#x72;&#111;&#x62;&#97;&#x74;&#x69;&#x73;&#x74;&#97;&#64;&#109;&#x79;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#x6f;&#x6d;">&#x70;&#x65;&#100;&#x72;&#111;&#x62;&#97;&#x74;&#x69;&#x73;&#x74;&#97;&#64;&#109;&#x79;&#115;&#101;&#x6c;&#x66;&#46;&#99;&#x6f;&#x6d;</a></p>
+				<p>Pedro Batista <a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#58;&#x70;&#101;&#x64;&#x72;&#111;&#x62;&#97;&#x74;&#x69;&#x73;&#116;&#x61;&#x40;&#x6d;&#121;&#x73;&#101;&#108;&#x66;&#46;&#99;&#x6f;&#109;">&#x70;&#101;&#x64;&#x72;&#111;&#x62;&#97;&#x74;&#x69;&#x73;&#116;&#x61;&#x40;&#x6d;&#121;&#x73;&#101;&#108;&#x66;&#46;&#99;&#x6f;&#109;</a></p>
 				<p>This plugin would not exist were it not for <a href="https://github.com/tschneidereit/typescript-module-merger">TypeScript Module Merger, by Till Schneidereit</a>.</p>
 				<h2 id="license">License</h2>
 				<p><a href="https://github.com/pjbatista/ts-merge/blob/master/LICENSE">Apache License 2.0</a></p>

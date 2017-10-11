@@ -26,17 +26,24 @@ function addToArrayDictionary<T, TDictionary extends Dictionary<T[]>>(
 
 function getDictionaryLength<T>(dictionary: Dictionary<T>) {
 
+    let countedAdditional = false;
     let result = 0;
 
-    for (let entry in dictionary) {
+    for (const entry in dictionary) {
 
         if (dictionary.hasOwnProperty(entry)) {
-            entry = "";
+
+            if (entry.indexOf(additionalName) > -1) {
+
+                if (countedAdditional) { continue; }
+                countedAdditional = true;
+            }
+
             result += 1;
         }
     }
 
-    return result;
+    return Math.max(result, 1);
 }
 
 function joinDeclarations(declarations: Declaration[], separator?: string) {
@@ -165,7 +172,7 @@ export class DtsProcessor implements MergeProcessor {
 
         const length1 = declarations.length;
         const length2 = getDictionaryLength(organizedDeclarations);
-        this._log(`Total declaration merges for '${filePath}': ${length2} (from ${length1})`);
+        this._log(`Total merged namespaces for '${filePath}': ${length2} (from ${length1})`);
 
         return this._mergeDeclarations(organizedDeclarations);
     }

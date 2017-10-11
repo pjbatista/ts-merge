@@ -4453,8 +4453,8 @@ declare namespace ts {
      */
     function transform<T extends Node>(source: T | T[], transformers: TransformerFactory<T>[], compilerOptions?: CompilerOptions): TransformationResult<T>;
 }
-
+
 declare function setTimeout(handler: (...args: any[]) => void, timeout: number): any;
-declare function clearTimeout(handle: any): void;
+declare function clearTimeout(handle: any): void;
 
 export = ts;

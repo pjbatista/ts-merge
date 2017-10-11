@@ -1,5 +1,4 @@
 declare namespace om {
-	
     /**
      * A type definition that represents callback functions for asynchronous neural network
      * processings feedback.
@@ -58,7 +57,8 @@ declare namespace om {
          */
         asyncTrain(callback: TrainingCallback, ...dataSet: any[]): Promise<void>;
     }
-	
+}
+declare namespace om {
     /**
      * **This interface is only declared, nothing is actually exported!**
      *
@@ -78,7 +78,8 @@ declare namespace om {
          */
         new (): T;
     }
-	
+}
+declare namespace om {
     /**
      * Primitive representation of a neural network. This interface exposes the main functionality
      * of neural network objects: to learn something through training and to execute what it's
@@ -109,7 +110,8 @@ declare namespace om {
          */
         train(...dataSet: any[]): void;
     }
-	
+}
+declare namespace om {
     /**
      * Represents a neural processing entity that has axon-like junctions with another neural
      * entities.
@@ -124,7 +126,8 @@ declare namespace om {
          */
         junctions: NeuralProcessingEntity[];
     }
-	
+}
+declare namespace om {
     /**
      * Primitive representation of a neural processing entity (e.g. a neuron or an action potential
      * encapsulation). Contains the programmatic equivalent of the action potential charge and
@@ -142,7 +145,8 @@ declare namespace om {
          */
         value: number;
     }
-	
+}
+declare namespace om {
     /**
      * Contains all states appliable to a neural network while it's training.
      */
@@ -162,7 +166,6 @@ declare namespace om {
     }
 }
 declare namespace om.data {
-	
     /**
      * A static utility class that converts multiple types of data into their binary representation,
      * i.e. a number or array of numbers that can be given to neural networks.
@@ -184,7 +187,8 @@ declare namespace om.data {
         static toString(value: number[]): string;
         private constructor();
     }
-	
+}
+declare namespace om.data {
     /**
      * **This interface is only declared, nothing is actually exported!**
      *
@@ -203,7 +207,8 @@ declare namespace om.data {
          */
         [key: string]: T;
     }
-	
+}
+declare namespace om.data {
     /**
      * Represents objects that create and retrieve singleton instances for its registered classes.
      *
@@ -250,7 +255,6 @@ declare namespace om.data {
     }
 }
 declare namespace om.mlp {
-	
     /**
      * Default learning rate value applied to perceptron neural networks.
      */

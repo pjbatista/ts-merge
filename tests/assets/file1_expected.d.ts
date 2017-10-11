@@ -1,6 +1,5 @@
 declare namespace om {
 	
-	
     /**
      * A type definition that represents callback functions for asynchronous neural network
      * processings feedback.
@@ -164,7 +163,6 @@ declare namespace om {
 }
 declare namespace om.data {
 	
-	
     /**
      * A static utility class that converts multiple types of data into their binary representation,
      * i.e. a number or array of numbers that can be given to neural networks.
@@ -252,7 +250,6 @@ declare namespace om.data {
     }
 }
 declare namespace om.mlp {
-	
 	
     /**
      * Default learning rate value applied to perceptron neural networks.
