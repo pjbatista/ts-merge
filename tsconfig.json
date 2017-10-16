@@ -19,5 +19,13 @@
         "pretty": true
     },
     "exclude": ["**/node_modules"],
-    "include": ["src/**/*.ts"]
+    "include": ["src/**/*.ts"],
+    "typedocOptions": {
+        "excludeExternals": true,
+        "excludeNotExported": true,
+        "excludePrivate": true,
+        "mode": "file",
+        "name": "\"ts-merge\" API",
+        "out": "docs"
+    }
 }

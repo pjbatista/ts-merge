@@ -23,10 +23,12 @@
         "ts-merge": "bin/ts-merge"
     },
     "scripts": {
-        "build": "tsc && npm test && typedoc --project . --out docs/ --mode file --name \"TypeScript Merge\" --excludePrivate --excludeExternals",
-        "lint": "tslint",
+        "build": "npm run test && npm run compile && npm run document",
+        "compile": "node_modules/.bin/tsc",
+        "document": "node_modules/.bin/typedoc --project .",
+        "lint": "node_modules/.bin/tslint",
         "publish": "npm run build",
-        "test": "mocha tests/**/*.test.ts -r ts-node/register -t 60000 --bail"
+        "test": "node_modules/.bin/mocha tests/**/*.test.ts -r ts-node/register -t 60000 --bail"
     },
     "files": [
         "bin/",
@@ -61,5 +63,5 @@
         "tslint": "^5.7.0",
         "typedoc": "^0.8.0"
     },
-    "version": "0.2.10"
+    "version": "0.3.0"
 }

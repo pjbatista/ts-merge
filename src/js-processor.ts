@@ -113,10 +113,10 @@ export class JsProcessor implements MergeProcessor {
         let ast = esprima.parseScript(this._file.contents, parseOptions);
 
         ast = codegen.attachComments(ast, ast.comments, (ast as any).tokens);
-        const mergeCount = this._optimizeScript(ast.body);
+        const mergeCount = this._optimizeScript(ast.body as any);
         this._log(`Total block merges for '${filePath}': ${mergeCount}`);
 
-        return this._createFile(ast, mergeCount);
+        return this._createFile(ast as any, mergeCount);
     }
 
     // Creates a file from the abstract tree program
@@ -163,7 +163,11 @@ export class JsProcessor implements MergeProcessor {
                     contents: codegenData.map.toString(),
                     name: newSourceMap,
                     path: this._file.path,
-                    source: this._file.source,
+                    source: {
+                        contents: "",
+                        name: this._file.name.replace(".js", ".js.map"),
+                        path: this._file.path,
+                    },
                 };
             }
 
@@ -174,7 +178,11 @@ export class JsProcessor implements MergeProcessor {
             contents: codegenData,
             name: newName,
             path: this._file.path,
-            source: this._file.source,
+            source: {
+                contents: "",
+                name: this._file.name,
+                path: this._file.path,
+            },
         };
     }
 

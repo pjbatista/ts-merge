@@ -16,16 +16,16 @@ import {File, LogLevel, MergeContext, Timer} from "./utils";
 export class FileWorker {
 
     private _context: MergeContext;
-    private _dtsList: Array<string | File> = [];
-    private _jsList: Array<string | File> = [];
+    private _dtsList: File[] = [];
+    private _jsList: File[] = [];
     private _skipped: File[] = [];
     private _timer: Timer;
 
     /** Gets the declaration (d.ts) file array to be merged. */
-    public get dtsList(): ReadonlyArray<string | File> { return this._dtsList; }
+    public get dtsList(): ReadonlyArray<File> { return this._dtsList; }
 
     /** Gets the javascript (.js) file array to be merged. */
-    public get jsList(): ReadonlyArray<string | File> { return this._jsList; }
+    public get jsList(): ReadonlyArray<File> { return this._jsList; }
 
     /**
      * Gets an array with the files that were not saved during {@link write} because their name
@@ -54,29 +54,27 @@ export class FileWorker {
      * @param file
      *   Path to file or file object to be added.
      */
-    public addDts(file: string | File) {
+    public addDts(file: string) {
 
-        if (typeof(file) === "string") {
-            if (!fs.existsSync(file)) {
-                this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
-                return;
-            }
-
-            if (file.substr(file.length - 4, 4).toLowerCase() !== "d.ts") {
-                this._context.log(`File '${file}' extension is not d.ts`, LogLevel.Warning);
-            }
-
-            const cwd = process.cwd();
-            file = path.relative(cwd, file);
-
-            file = {
-                contents: fs.readFileSync(file).toString(),
-                name: path.basename(file),
-                path: path.dirname(file),
-            };
+        if (!fs.existsSync(file)) {
+            this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
+            return;
         }
 
-        this._dtsList.push(file);
+        if (file.substr(file.length - 4, 4).toLowerCase() !== "d.ts") {
+            this._context.log(`File '${file}' extension is not d.ts`, LogLevel.Warning);
+        }
+
+        const cwd = process.cwd();
+        file = path.relative(cwd, file);
+
+        const fileObject = {
+            contents: fs.readFileSync(file).toString(),
+            name: path.basename(file),
+            path: path.dirname(file),
+        };
+
+        this._dtsList.push(fileObject);
     }
 
     /**
@@ -132,12 +130,12 @@ export class FileWorker {
 
                     if (extension === ".js") {
                         count += 1;
-                        this._jsList.push(file);
+                        this.addJs(file);
                     }
 
                     if (extension === ".ts") {
                         count += 1;
-                        this._dtsList.push(file);
+                        this.addDts(file);
                     }
                 }
 
@@ -153,29 +151,27 @@ export class FileWorker {
      * @param file
      *   Path to file or file object to be added.
      */
-    public addJs(file: string | File) {
+    public addJs(file: string) {
 
-        if (typeof(file) === "string") {
-            if (!fs.existsSync(file)) {
-                this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
-                return;
-            }
-
-            if (path.extname(file).toLowerCase() !== ".js") {
-                this._context.log(`File '${file}' extension is not js`, LogLevel.Warning);
-            }
-
-            const cwd = process.cwd();
-            file = path.relative(cwd, file);
-
-            file = {
-                contents: fs.readFileSync(file).toString(),
-                name: path.basename(file),
-                path: path.dirname(file),
-            };
+        if (!fs.existsSync(file)) {
+            this._context.log(`File '${file}' does not exist. Skipping`, LogLevel.Warning);
+            return;
         }
 
-        this._jsList.push(file);
+        if (path.extname(file).toLowerCase() !== ".js") {
+            this._context.log(`File '${file}' extension is not js`, LogLevel.Warning);
+        }
+
+        const cwd = process.cwd();
+        file = path.relative(cwd, file);
+
+        const fileObject = {
+            contents: fs.readFileSync(file).toString(),
+            name: path.basename(file),
+            path: path.dirname(file),
+        };
+
+        this._jsList.push(fileObject);
     }
 
     /**
@@ -201,20 +197,6 @@ export class FileWorker {
                 callback(files);
             },
         );
-    }
-
-    /**
-     * @deprecated
-     * @see {work}
-     */
-    public workAndSave(callback?: () => void) {
-        this.work(files => {
-            this.write(files);
-
-            if (callback) {
-                callback();
-            }
-        });
     }
 
     /**

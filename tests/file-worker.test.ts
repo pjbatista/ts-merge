@@ -8,7 +8,7 @@ const context = new MergeContext({ logger: "none" });
 
 describe("FileWorker", () => {
 
-    it("add methods", () => {
+    it("add methods", done => {
         const worker = new FileWorker(context);
 
         worker.addDts("./tests/assets/file1_raw.d.ts");
@@ -23,30 +23,33 @@ describe("FileWorker", () => {
 
         worker.addGlobPatterns(() => {
             expect(worker.jsList.length).to.equal(4);
+            done();
         }, ["./tests/assets/*_expected.js"]);
     });
 
-    it("work (async)", () => {
+    it("work (async)", done => {
         const worker = new FileWorker(context);
 
         worker.addGlobPatterns(() => {
             worker.work(files => {
-                expect(files.length).to.equal(4);
+                expect(files.length).to.equal(5);
+                done();
             });
         }, ["./tests/assets/*_raw.*"]);
     });
 
-    it("work (sync)", () => {
+    it("work (sync)", done => {
         const worker = new FileWorker(context);
 
         worker.addGlobPatterns(() => {
 
             const files = worker.workSync();
-            expect(files.length).to.equal(4);
+            expect(files.length).to.equal(5);
+            done();
         }, ["./tests/assets/*_raw.*"]);
     });
 
-    it("write", () => {
+    it("write", done => {
         const worker = new FileWorker(context);
 
         worker.addGlobPatterns(() => {
@@ -60,7 +63,6 @@ describe("FileWorker", () => {
                 for (const file of files) {
 
                     const source = file.source as File;
-
                     let expected = source.path + "/" + source.name.replace("raw", "expected");
                     expected = fs.readFileSync(expected).toString();
 
@@ -69,11 +71,12 @@ describe("FileWorker", () => {
 
                     expect(result).to.equal(expected);
                 }
+                done();
             });
         }, ["./tests/assets/*_raw.*"]);
     });
 
-    it("with skipDeclarations and skipScripts", () => {
+    it("with skipDeclarations and skipScripts", done => {
 
         const customContext = new MergeContext({
             logger: "none",
@@ -85,6 +88,7 @@ describe("FileWorker", () => {
         worker.addGlobPatterns(() => {
             worker.work(files => {
                 expect(files.length).to.equal(0);
+                done();
             });
         }, ["./tests/assets/*_raw.*"]);
     });

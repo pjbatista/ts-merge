@@ -1,5 +1,16 @@
 # ts-merge CHANGELOG
 
+## Version 0.3.0
+
+- Documentation added to external page https://pjbatista.github.io/ts-merge/;
+- Improved `FileWorker` unit testing;
+- Fixed a @type incompatibility issues;
+- Fixed problems with file sources being lost;
+- Removed previously deprecated `workAndSave`;
+- TypeDoc options moved to tsconfig;
+- Packaging tasks moved to local binary dependency;
+- Deprecated older versions.
+
 ## Version 0.2.10
 
 - Moved some @types from dev-dependency to dependency to avoid TS7016 errors;

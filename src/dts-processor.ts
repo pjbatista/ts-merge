@@ -258,7 +258,11 @@ export class DtsProcessor implements MergeProcessor {
             contents: data,
             name: this._file.name.replace(".d.ts", extension),
             path: this._file.path,
-            source: this._file.source,
+            source: {
+                contents: "",
+                name: this._file.name,
+                path: this._file.path,
+            },
         };
     }
 
