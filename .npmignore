@@ -1,8 +1,8 @@
 # Source
 src/
 
-# Temp
-tests/temp/
+# Tests
+tests/
 
 # Yarn files
 yarn-error.log

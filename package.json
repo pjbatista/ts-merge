@@ -1,6 +1,6 @@
 {
     "name": "ts-merge",
-    "description": "Merge definitions of transpiled namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)",
+    "description": "Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)",
     "author": "Pedro Batista <pedrobatista@myself.com>",
     "keywords": [
         "typescript",
@@ -31,6 +31,7 @@
         "test": "node_modules/.bin/mocha tests/**/*.test.ts -r ts-node/register",
         "test-run": "npm run compile && node bin/ts-merge"
     },
+    "files": ["bin/", "dist/"],
     "dependencies": {
         "@types/escodegen": "^0.0.6",
         "@types/esprima": "^4.0.0",
@@ -62,5 +63,5 @@
         "tslint": "^5.7.0",
         "typedoc": "^0.8.0"
     },
-    "version": "0.4.0"
+    "version": "0.4.1"
 }

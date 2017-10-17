@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
-var tsmerge = require('../dist/cli.js');
+var tsmerge = require("../dist/cli");
 new tsmerge.CliApplication();

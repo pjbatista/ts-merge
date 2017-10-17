@@ -1,5 +1,9 @@
 # ts-merge CHANGELOG
 
+## Version 0.4.1
+
+Fixed binary due to lack of publishing "dist/".
+
 ## Version 0.4.0
 
 - Unit testing overhaul:
