@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>FileWorker | &quot;ts-merge&quot; API</title>
+	<title>FileWorker | ts-merge API</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">&quot;ts-merge&quot; API</a>
+					<a href="../index.html" class="title">ts-merge API</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -70,6 +70,32 @@
 					</div>
 					<p>Using this object is probably the best way to work with multiple file mergings while avoiding
 					clogging Node&#39;s heap due to the heavy nature of this plugin.</p>
+					<h3 id="sync-">Sync:</h3>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>);
+
+<span class="hljs-keyword">var</span> worker = <span class="hljs-keyword">new</span> tsmerge.FileWorker({ <span class="hljs-attr">outDir</span>: <span class="hljs-string">"dist/postbuild"</span> });
+worker.addFiles(<span class="hljs-string">"myfile.d.ts"</span>, <span class="hljs-string">"myfile2.js"</span>, <span class="hljs-string">"myfile3.js"</span>)
+worker.workSync();
+worker.write();
+</code></pre>
+					<h3 id="async-">Async:</h3>
+					<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> tsmerge = <span class="hljs-built_in">require</span>(<span class="hljs-string">"ts-merge"</span>);
+
+<span class="hljs-keyword">var</span> worker = <span class="hljs-keyword">new</span> tsmerge.FileWorker({ <span class="hljs-attr">outDir</span>: <span class="hljs-string">"dist/postbuild"</span> });
+worker.addFiles(<span class="hljs-string">"myfile.d.ts"</span>, <span class="hljs-string">"myfile2.js"</span>, <span class="hljs-string">"myfile3.js"</span>)
+worker.work(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">files</span>) </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; files.length; i++) {
+        <span class="hljs-built_in">console</span>.log(files[i].name);
+    }
+
+    <span class="hljs-comment">// Output:</span>
+    <span class="hljs-comment">//   myfile.merged.d.ts</span>
+    <span class="hljs-comment">//   myfile2.merged.js</span>
+    <span class="hljs-comment">//   myfile3.merged.js</span>
+
+    worker.write();
+})
+</code></pre>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -94,6 +120,7 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="fileworker.html#dtslist" class="tsd-kind-icon">dts<wbr>List</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="fileworker.html#filecount" class="tsd-kind-icon">file<wbr>Count</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="fileworker.html#jslist" class="tsd-kind-icon">js<wbr>List</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="fileworker.html#timer" class="tsd-kind-icon">timer</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="fileworker.html#unsaved" class="tsd-kind-icon">unsaved</a></li>
@@ -104,7 +131,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#adddts" class="tsd-kind-icon">add<wbr>Dts</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#addfile" class="tsd-kind-icon">add<wbr>File</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#addfiles" class="tsd-kind-icon">add<wbr>Files</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#addglobpatterns" class="tsd-kind-icon">add<wbr>Glob<wbr>Patterns</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#addglobpatternssync" class="tsd-kind-icon">add<wbr>Glob<wbr>Patterns<wbr>Sync</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#addjs" class="tsd-kind-icon">add<wbr>Js</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#work" class="tsd-kind-icon">work</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="fileworker.html#worksync" class="tsd-kind-icon">work<wbr>Sync</a></li>
@@ -120,19 +149,44 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>File<wbr>Worker<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/mergeoptions.html" class="tsd-signature-type">MergeOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="fileworker.html" class="tsd-signature-type">FileWorker</a></li>
 						<li class="tsd-signature tsd-kind-icon">new <wbr>File<wbr>Worker<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">?: </span><a href="mergecontext.html" class="tsd-signature-type">MergeContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="fileworker.html" class="tsd-signature-type">FileWorker</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L37">file-worker.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L74">file-worker.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Initializes a new instance of the <a href="fileworker.html">FileWorker</a> class, using the given context object or
-									creating one with the default options.</p>
+									<p>Initializes a new instance of the <a href="fileworker.html">FileWorker</a> class, using the given options to
+									configure its mergeContext</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/mergeoptions.html" class="tsd-signature-type">MergeOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>  Options object used to configure this worker&#39;s context.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="fileworker.html" class="tsd-signature-type">FileWorker</a></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L83">file-worker.ts:83</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initializes a new instance of the <a href="fileworker.html">FileWorker</a> class, using the given context object.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -163,7 +217,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L25">file-worker.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L59">file-worker.ts:59</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -172,6 +226,28 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="filecount" class="tsd-anchor"></a>
+					<h3>file<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> fileCount<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L62">file-worker.ts:62</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets the number of files currently in the work queue.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -185,7 +261,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L28">file-worker.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L65">file-worker.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -201,13 +277,13 @@
 					<a name="timer" class="tsd-anchor"></a>
 					<h3>timer</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> timer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="timer.html" class="tsd-signature-type">Timer</a></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> timer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Timer</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L37">file-worker.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L74">file-worker.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -215,7 +291,7 @@
 									<p>Gets the timer object that keeps track of the time spent while working.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <a href="timer.html" class="tsd-signature-type">Timer</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Timer</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -229,7 +305,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L34">file-worker.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L71">file-worker.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -255,7 +331,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L57">file-worker.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L119">file-worker.ts:119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -286,7 +362,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L86">file-worker.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L168">file-worker.ts:168</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,16 +384,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addglobpatterns" class="tsd-anchor"></a>
-					<h3>add<wbr>Glob<wbr>Patterns</h3>
+					<a name="addfiles" class="tsd-anchor"></a>
+					<h3>add<wbr>Files</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Glob<wbr>Patterns<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Files<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>filePaths<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L107">file-worker.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L155">file-worker.ts:155</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds multiple files to the worker object.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>filePaths: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>  One or more strings with the paths to be added.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addglobpatterns" class="tsd-anchor"></a>
+					<h3>add<wbr>Glob<wbr>Patterns</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Glob<wbr>Patterns<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, <span class="tsd-signature-symbol">...</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L190">file-worker.ts:190</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -330,15 +437,22 @@
 								<li>
 									<h5>callback: <span class="tsd-signature-type">function</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>  Function to be called once the glob finished adding files to the queue.</p>
+										<p>  A function callback to be used when the files matching the pattern are finished being
+										added; this function may accept a parameter with the list of files added.</p>
 									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>files<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 											</ul>
 											<ul class="tsd-descriptions">
 												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>files: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+														</li>
+													</ul>
 													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 												</li>
 											</ul>
@@ -346,13 +460,45 @@
 									</ul>
 								</li>
 								<li>
-									<h5>patterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>patterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>  One or more string with glob patterns containing files to be added.</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addglobpatternssync" class="tsd-anchor"></a>
+					<h3>add<wbr>Glob<wbr>Patterns<wbr>Sync</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Glob<wbr>Patterns<wbr>Sync<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>patterns<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L229">file-worker.ts:229</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds all files that matches the given glob patterns, synchronously.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>patterns: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>  One or more string with glob patterns containing files to be added.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>  An array with the files added to the work queue.</p>
 						</li>
 					</ul>
 				</section>
@@ -366,7 +512,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L154">file-worker.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L257">file-worker.ts:257</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -397,7 +543,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L184">file-worker.ts:184</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L294">file-worker.ts:294</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -447,7 +593,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L206">file-worker.ts:206</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L321">file-worker.ts:321</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -464,13 +610,13 @@
 					<a name="write" class="tsd-anchor"></a>
 					<h3>write</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>files<span class="tsd-signature-symbol">: </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>files<span class="tsd-signature-symbol">?: </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/a4507c3/src/file-worker.ts#L241">file-worker.ts:241</a></li>
+									<li>Defined in <a href="https://github.com/pjbatista/ts-merge/blob/b9e4fa5/src/file-worker.ts#L364">file-worker.ts:364</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -481,7 +627,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>files: <a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> files: <a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/file.html" class="tsd-signature-type">File</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>  A string or array of string with the files to be writen.</p>
 									</div>
@@ -524,6 +670,9 @@
 								<a href="fileworker.html#dtslist" class="tsd-kind-icon">dts<wbr>List</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="fileworker.html#filecount" class="tsd-kind-icon">file<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="fileworker.html#jslist" class="tsd-kind-icon">js<wbr>List</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
@@ -539,7 +688,13 @@
 								<a href="fileworker.html#addfile" class="tsd-kind-icon">add<wbr>File</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="fileworker.html#addfiles" class="tsd-kind-icon">add<wbr>Files</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="fileworker.html#addglobpatterns" class="tsd-kind-icon">add<wbr>Glob<wbr>Patterns</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="fileworker.html#addglobpatternssync" class="tsd-kind-icon">add<wbr>Glob<wbr>Patterns<wbr>Sync</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="fileworker.html#addjs" class="tsd-kind-icon">add<wbr>Js</a>
@@ -566,9 +721,6 @@
 					<li class=" tsd-kind-class">
 						<a href="mergeprocessor.html" class="tsd-kind-icon">Merge<wbr>Processor</a>
 					</li>
-					<li class=" tsd-kind-class">
-						<a href="timer.html" class="tsd-kind-icon">Timer</a>
-					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/declaration.html" class="tsd-kind-icon">Declaration</a>
 					</li>
@@ -589,6 +741,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../globals.html#extendoptions" class="tsd-kind-icon">extend<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#streamfunction" class="tsd-kind-icon">stream<wbr>Function</a>
 					</li>
 				</ul>
 			</nav>

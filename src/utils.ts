@@ -1,9 +1,7 @@
-import gutil = require("gulp-util");
-import process = require("process");
-
 import {GenerateOptions} from "escodegen";
 import {ParseOptions} from "esprima";
 import {Statement} from "estree";
+import gutil = require("gulp-util");
 
 // A cleanup regex to avoid invalid file name generation
 const extensionRegex = /[^a-zA-Z0-9_.\-]+/g;
@@ -12,7 +10,6 @@ const generateOptions: GenerateOptions = {
     comment: true,
     format: {
         indent: { adjustMultilineComment: true },
-        preserveBlankLines: true,
     },
 };
 
@@ -71,6 +68,8 @@ const noneLogger: LoggerFunction = (message: string) => { message = ""; };
  *   Type of options object used to extend its default.
  * @return
  *   The extended object instance.
+ * @throws Error
+ *   when the type is invalid.
  */
 export function extendOptions<T extends GenerateOptions | MergeOptions | ParseOptions>(
     type: "generate" | "merge" | "parse",
@@ -91,7 +90,7 @@ export function extendOptions<T extends GenerateOptions | MergeOptions | ParseOp
             break;
 
         default:
-            throw new gutil.PluginError("ts-merge", `Invalid options type: '${type}'.`);
+            throw new Error(`Invalid options type: '${type}'.`);
     }
 
     options = options || {} as any;
@@ -142,7 +141,9 @@ export interface Dictionary<TOut> {
 }
 
 /**
- * Represents a input file, with its data and metadata.
+ * Represents a "ts-merge" file object, that contains data and metadata pertaining to a single file.
+ *
+ * This object is used to transmit information from workers to processors and can be
  */
 export interface File {
 
@@ -167,17 +168,33 @@ export interface File {
 
 /**
  * Represents the callback function used as a logger for ts-merge.
+ *
  */
 export type LoggerFunction = (message: string, level?: LogLevel, newLine?: boolean) => void;
 
 /**
  * An enumerator with all possible values for logging level, which categorizes the log information.
+ *
+ * These levels are given to the logger of a {@link MergeContext}.
  */
 export enum LogLevel {
+
+    /** Verbose log, i.e. information that isn't necessarily important. */
     Verbose = 0,
+
+    /** Information log, which contains a message for when the system is normally operating. */
     Information = 1,
+
+    /**
+     * Warning log, which contains not necessarily an error, but something that may cause error in
+     * the future.
+     */
     Warning = 2,
+
+    /** Error log, i.e. something wen't wrong while doing an operation. */
     Error = 3,
+
+    /** Success log, for when everything works correctly. */
     Success = 4,
 }
 
@@ -253,8 +270,9 @@ export class MergeContext {
     }
 
     /**
-     * Logs a new error, creating a gulp-util/PluginError object in case a string is given. This
-     * error is also stored on the {@link errors} property.
+     * Logs a new error, creating a Error object in case a string is given.
+     *
+     * This error is also stored on the {@link errors} property.
      *
      * @param error
      *   Either a string with the error message or an Error object.
@@ -264,7 +282,7 @@ export class MergeContext {
     public error(error: string | Error) {
 
         if (typeof(error) === "string") {
-            error = new gutil.PluginError("ts-merge", error);
+            error = new Error(error);
         }
 
         this._errors.push(error);
@@ -284,7 +302,6 @@ export class MergeContext {
      *   Whether to insert a new line on loggers that accept so.
      */
     public log(message: string, level: LogLevel = LogLevel.Information, newLine: boolean = true) {
-
         this._logger(message, level, newLine);
     }
 }
@@ -328,6 +345,13 @@ export interface MergeOptions {
     parseOptions?: ParseOptions;
 
     /**
+     * Specifies the output directory for the merged files.
+     *
+     * @see FileWorker.write
+     */
+    outDir?: string;
+
+    /**
      * Whether to skip the merging of declaration (.d.ts files) 'namespaces' or not.
      */
     skipDeclarations?: boolean;
@@ -366,71 +390,4 @@ export declare class MergeProcessor {
      *   A file object with the merged data.
      */
     public merge(): File | null;
-}
-
-/**
- * An object that uses Node.JS process.hrtime method to count timespans with nanosecond precision.
- */
-export class Timer {
-
-    private _end: number | undefined;
-    private _start: number;
-
-    /**
-     * Gets the number of nanoseconds that were spent between the object's creation and the call to
-     * the {@link end} method.
-     */
-    public get totalNanoSeconds() {
-
-        if (!this._end) { return NaN; }
-        return this._end - this._start;
-    }
-
-    /**
-     * Initializes a new instance of the {@link Timer} class, starting to count the nanoseconds.
-     */
-    public constructor() {
-
-        const ns = process.hrtime();
-        this._start = ns[0] * 1000000000 + ns[1];
-    }
-
-    /**
-     * Ends the timer execution, allowing the total nanoseconds to be obtained.
-     */
-    public end() {
-
-        const ns = process.hrtime();
-        this._end = ns[0] * 1000000000 + ns[1];
-    }
-
-    /**
-     * Retrieves a string with a humanized value for the timer total nanoseconds.
-     */
-    public toString() {
-
-        let value = this.totalNanoSeconds;
-        let unit = "ns";
-
-        if (isNaN(value)) {
-            return "-";
-        }
-
-        if (value > 1000) {
-            value = value / 1000;
-            unit = "μs";
-        }
-
-        if (value > 1000) {
-            value = value / 1000;
-            unit = "ms";
-        }
-
-        if (value > 1000) {
-            value = value / 1000;
-            unit = "s";
-        }
-
-        return `${value.toPrecision(4)} ${unit}`;
-    }
 }

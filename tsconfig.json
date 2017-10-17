@@ -25,7 +25,8 @@
         "excludeNotExported": true,
         "excludePrivate": true,
         "mode": "file",
-        "name": "\"ts-merge\" API",
-        "out": "docs"
+        "name": "ts-merge API",
+        "out": "docs",
+        "readme": "API.md"
     }
 }

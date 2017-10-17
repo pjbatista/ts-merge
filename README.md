@@ -18,19 +18,17 @@ This plugin is based on and inspired by Till Schneidereit's [typescript-module-m
 
 Local installations allow it to be used on a per project basis:
 
-`npm install ts-merge --save`
-
-`yarn add ts-merge`
+`npm install ts-merge --save` -or- `yarn add ts-merge`
 
 ### Global
 
 Global installations expose the **ts-merge** binary to the command-line, making it available, well, globally:
 
-`npm install ts-merge -g`
-
-`yarn global add ts-merge`
+`npm install ts-merge -g` -or- `yarn global add ts-merge`
 
 ## Usage
+
+**API**: visit https://pjbatista.github.io/ts-merge/ for the full documentation.
 
 Once installed, this package can be used in multiple ways: direct (importing and using in code), in streams (as a part of a node stream pipeline - like gulp), or in consoles/terminals as a CLI app.
 
@@ -106,10 +104,12 @@ fileWorker.work(function (files) {
 
 ### Streams (gulp)
 
-`ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `streamFunction` from the global exports.
+`ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `stream` or `streamFunction` from its exports.
 
 ```javascript
 
+// Both ways are correct to import the ts-merge stream worker:
+var tsmerge = require("ts-merge").stream;
 var tsmerge = require("ts-merge").streamFunction;
 
 gulp.task("merge", function () {
@@ -120,15 +120,15 @@ gulp.task("merge", function () {
 });
 ```
 
-### Command-line interface application
+### CLI
 
-The CLI app is available globally as `ts-merge` and locally at `node_modules/.bin/ts-merge`.
+The command-line interface application is available globally as `ts-merge` and locally at `node_modules/.bin/ts-merge` (which is [recommended](https://docs.npmjs.com/files/package.json#preferglobal)).
 
 You can specify options using --[option-name] [option-value] modifiers.
 
 ```sh
 ts-merge out/my.js --extensionPrefix "" --skipSourceMaps
-# An empty extensionPrefix overwrites out/my.js
+# An empty extensionPrefix will overwrite out/my.js
 ```
 
 The app can also be used with multiple files.

@@ -1,10 +1,10 @@
 import fs = require("fs");
 import glob = require("glob");
 import path = require("path");
-
+import {Timer} from "timecount";
 import {DtsProcessor} from "./dts-processor";
 import {JsProcessor} from "./js-processor";
-import {File, LogLevel, MergeContext, Timer} from "./utils";
+import {File, LogLevel, MergeContext, MergeOptions} from "./utils";
 
 /**
  * Represents worker objects that are able to control merging processors for multiple files,
@@ -12,17 +12,54 @@ import {File, LogLevel, MergeContext, Timer} from "./utils";
  *
  * Using this object is probably the best way to work with multiple file mergings while avoiding
  * clogging Node's heap due to the heavy nature of this plugin.
+ *
+ * ### Sync:
+ *
+ * ```javascript
+ * var tsmerge = require("ts-merge");
+ *
+ * var worker = new tsmerge.FileWorker({ outDir: "dist/postbuild" });
+ * worker.addFiles("myfile.d.ts", "myfile2.js", "myfile3.js")
+ * worker.workSync();
+ * worker.write();
+ * ```
+ *
+ * ### Async:
+ *
+ * ```javascript
+ * var tsmerge = require("ts-merge");
+ *
+ * var worker = new tsmerge.FileWorker({ outDir: "dist/postbuild" });
+ * worker.addFiles("myfile.d.ts", "myfile2.js", "myfile3.js")
+ * worker.work(function(files) {
+ *     for (var i = 0; i < files.length; i++) {
+ *         console.log(files[i].name);
+ *     }
+ * 
+ *     // Output:
+ *     //   myfile.merged.d.ts
+ *     //   myfile2.merged.js
+ *     //   myfile3.merged.js
+ *
+ *     worker.write();
+ * })
+ * ```
  */
 export class FileWorker {
 
     private _context: MergeContext;
     private _dtsList: File[] = [];
+    private _filePaths: string[] = [];
     private _jsList: File[] = [];
+    private _mergedFiles: File[] = [];
     private _skipped: File[] = [];
     private _timer: Timer;
 
     /** Gets the declaration (d.ts) file array to be merged. */
     public get dtsList(): ReadonlyArray<File> { return this._dtsList; }
+
+    /** Gets the number of files currently in the work queue. */
+    public get fileCount(): number { return this._filePaths.length; }
 
     /** Gets the javascript (.js) file array to be merged. */
     public get jsList(): ReadonlyArray<File> { return this._jsList; }
@@ -37,15 +74,40 @@ export class FileWorker {
     public get timer() { return this._timer; }
 
     /**
-     * Initializes a new instance of the {@link FileWorker} class, using the given context object or
-     * creating one with the default options.
+     * Initializes a new instance of the {@link FileWorker} class, using the given options to
+     * configure its mergeContext
+     *
+     * @param options
+     *   Options object used to configure this worker's context.
+     */
+    public constructor(options?: MergeOptions);
+
+    /**
+     * Initializes a new instance of the {@link FileWorker} class, using the given context object.
      *
      * @param context
      *   Context object to be used throughout merging operations.
      */
-    public constructor(context?: MergeContext) {
+    public constructor(context?: MergeContext);
 
-        this._context = context || new MergeContext();
+    /**
+     * Initializes a new instance of the {@link FileWorker} class, using the given context object
+     * -or- the given options object.
+     *
+     * @param contextOrOptions
+     *   Context object to be used throughout merging operations -or- options object used to
+     *   configure this worker's context.
+     */
+    public constructor(contextOrOptions?: MergeContext | MergeOptions) {
+
+        contextOrOptions = contextOrOptions || {};
+
+        if (contextOrOptions instanceof MergeContext) {
+            this._context = contextOrOptions;
+            return;
+        }
+
+        this._context = new MergeContext(contextOrOptions);
     }
 
     /**
@@ -61,12 +123,18 @@ export class FileWorker {
             return;
         }
 
-        if (file.substr(file.length - 4, 4).toLowerCase() !== "d.ts") {
+        if (file.substr(file.length - 5).toLowerCase() !== ".d.ts") {
             this._context.log(`File '${file}' extension is not d.ts`, LogLevel.Warning);
+            return;
         }
 
         const cwd = process.cwd();
         file = path.relative(cwd, file);
+
+        if (this._filePaths.indexOf(file) > -1) {
+            this._context.log(`File '${file}' is already being processed`, LogLevel.Information);
+            return;
+        }
 
         const fileObject = {
             contents: fs.readFileSync(file).toString(),
@@ -74,7 +142,21 @@ export class FileWorker {
             path: path.dirname(file),
         };
 
+        this._filePaths.push(file);
         this._dtsList.push(fileObject);
+    }
+
+    /**
+     * Adds multiple files to the worker object.
+     *
+     * @param filePaths
+     *   One or more strings with the paths to be added.
+     */
+    public addFiles(... filePaths: string[]) {
+
+        for (const filePath of filePaths) {
+            this.addFile(filePath);
+        }
     }
 
     /**
@@ -100,15 +182,21 @@ export class FileWorker {
      * Adds all files that matches the given glob patterns.
      *
      * @param callback
-     *   Function to be called once the glob finished adding files to the queue.
+     *   A function callback to be used when the files matching the pattern are finished being
+     *   added; this function may accept a parameter with the list of files added.
      * @param patterns
      *   One or more string with glob patterns containing files to be added.
      */
-    public addGlobPatterns(callback: () => void, patterns: string[]) {
+    public addGlobPatterns(callback: (files: string[]) => void, ... patterns: string[]) {
 
-        let count = 0;
+        const files: string[] = [];
         const ignored = `**/*.${this._context.options.extensionPrefix}.*`;
         const workingDir = process.cwd();
+
+        const realCallback = (fileList: string[]) => {
+            this.addFiles.apply(this, fileList);
+            callback(fileList);
+        };
 
         for (const pattern of patterns) {
             glob(
@@ -117,32 +205,47 @@ export class FileWorker {
                     ignore: ignored,
                     root: workingDir,
                 },
-                (error: Error | null, files: string[]) => {
+                (error, matches) => {
+                    if (error !== null) { throw error; }
 
-                if (error !== null) {
-                    this._context.error(error);
-                    return;
-                }
+                    files.push.apply(files, matches);
 
-                for (const file of files) {
-
-                    const extension = path.extname(file).toLowerCase();
-
-                    if (extension === ".js") {
-                        count += 1;
-                        this.addJs(file);
+                    if (pattern === patterns[patterns.length - 1]) {
+                        realCallback(files);
                     }
-
-                    if (extension === ".ts") {
-                        count += 1;
-                        this.addDts(file);
-                    }
-                }
-
-                this._context.log(`Added ${count} file(s) to the queue`);
-                callback();
-            });
+                },
+            );
         }
+    }
+
+    /**
+     * Adds all files that matches the given glob patterns, synchronously.
+     *
+     * @param patterns
+     *   One or more string with glob patterns containing files to be added.
+     * @return
+     *   An array with the files added to the work queue.
+     */
+    public addGlobPatternsSync(... patterns: string[]) {
+
+        const fileList: string[] = [];
+        const ignored = `**/*.${this._context.options.extensionPrefix}.*`;
+        const workingDir = process.cwd();
+
+        for (const pattern of patterns) {
+            const files = glob.sync(
+                pattern,
+                {
+                    ignore: ignored,
+                    root: workingDir,
+                },
+            );
+
+            fileList.push.apply(fileList, files);
+            this.addFiles.apply(this, files);
+        }
+
+        return fileList;
     }
 
     /**
@@ -160,10 +263,16 @@ export class FileWorker {
 
         if (path.extname(file).toLowerCase() !== ".js") {
             this._context.log(`File '${file}' extension is not js`, LogLevel.Warning);
+            return;
         }
 
         const cwd = process.cwd();
         file = path.relative(cwd, file);
+
+        if (this._filePaths.indexOf(file) > -1) {
+            this._context.log(`File '${file}' is already being processed`, LogLevel.Information);
+            return;
+        }
 
         const fileObject = {
             contents: fs.readFileSync(file).toString(),
@@ -171,6 +280,7 @@ export class FileWorker {
             path: path.dirname(file),
         };
 
+        this._filePaths.push(file);
         this._jsList.push(fileObject);
     }
 
@@ -194,6 +304,11 @@ export class FileWorker {
                 files.push.apply(files, file);
             },
             () => {
+                this._dtsList = [];
+                this._filePaths = [];
+                this._jsList = [];
+
+                this._mergedFiles = files;
                 callback(files);
             },
         );
@@ -206,6 +321,9 @@ export class FileWorker {
     public workSync() {
 
         const files: File[] = [];
+
+        this._timer = new Timer();
+        this._timer.start();
 
         for (const dtsFile of this._dtsList) {
             const dtsProcessor = new DtsProcessor(this._read(dtsFile), this._context);
@@ -229,6 +347,11 @@ export class FileWorker {
             }
         }
 
+        this._timer.end();
+
+        this._dtsList = [];
+        this._jsList = [];
+        this._mergedFiles = files;
         return files;
     }
 
@@ -238,7 +361,9 @@ export class FileWorker {
      * @param files
      *   A string or array of string with the files to be writen.
      */
-    public write(files: File | File[]) {
+    public write(files?: File | File[]) {
+
+        files = files || this._mergedFiles;
 
         if (!(files instanceof Array)) {
             files = [files];
@@ -251,10 +376,10 @@ export class FileWorker {
                 continue;
             }
 
-            const filePath = file.path + "/" + file.name;
+            const basePath = this._context.options.outDir || file.path;
+            const filePath = basePath + "/" + file.name;
 
-            if (file.source) {
-
+            if (file.source && file.source.contents.length > 0) {
                 const sourceSize = file.source.size;
                 this._context.log(`${filePath}: (${file.size} bytes (from ${sourceSize} bytes)).`);
             }
@@ -289,6 +414,7 @@ export class FileWorker {
     ) {
 
         this._timer = new Timer();
+        this._timer.start();
 
         const workGenerator = this._doWork();
         let promise = workGenerator.next();

@@ -1,5 +1,25 @@
 # ts-merge CHANGELOG
 
+## Version 0.4.0
+
+- Unit testing overhaul:
+  - Renamed all test case descriptions;
+  - Added specific tests for "utils";
+  - Added specific tests for "stream".
+- `DtsProcessor` and `JsProcessor`:
+  - Added support for `outDir`;
+  - Post-processing file normalization.
+- `FileWorker`:
+  - Added constructor overrides (accepting options);
+  - Added `fileCount`;
+  - Fixed an import multi-callback leak from `addGlobPatterns`;
+  - Created `addGlobPatternsSync` and moved internal usages to it;
+- Added stream alias to streamFunction;
+- Improved help text for exported members;
+- Added documentation link to README;
+- Removed `Timer` in favor of [timecount](https://github.com/pjbatista/timecount);
+- Changed documentation index to the new file API.md.
+
 ## Version 0.3.0
 
 - Documentation added to external page https://pjbatista.github.io/ts-merge/;
@@ -10,6 +30,8 @@
 - TypeDoc options moved to tsconfig;
 - Packaging tasks moved to local binary dependency;
 - Deprecated older versions.
+
+---
 
 ## Version 0.2.10
 
@@ -66,6 +88,8 @@ Removed unnecessary reference to gulp and gulpfile.js.
 - All options are coded in context, cli, processors and workers;
 - Added `ts-merge/stream` module with the default export `streamFunction`;
 - Added missing type exports on index.
+
+---
 
 ## Version 0.1.5
 

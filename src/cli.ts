@@ -5,7 +5,24 @@ import {FileWorker} from "./file-worker";
 import {LogLevel, MergeContext, MergeOptions} from "./utils";
 
 /**
- * Represents the application behind the command-line interface.
+ * Represents the application behind the command-line interface; this object parses and routes
+ * console/terminal commands and routes it to the module.
+ *
+ * Usage:
+ *
+ * ```plain
+ * ts-merge pattern0 [pattern1 ... patternN] [options]
+ * pattern0...patternN: glob patterns with the files to be merged
+ * [options]: change the behavior of ts-merge:
+ *   --help             | -H                 Displays this usage message
+ *   --extensionPrefix  | -E (merged)        Sets extension prefix for output files
+ *   --outDir           | -O (empty)         Sets the output directory
+ *   --logger           | -L (console)|none  Sets the logger type
+ *   --skipDeclarations | -D                 Do not parse .d.ts files
+ *   --skipScripts      | -S                 Do not parse .js files
+ *   --skipSourceMaps   | -M                 Prevents generation of .map files
+ *   --version          | -V                 Shows ts-merge version
+ * ```
  */
 export class CliApplication {
 
@@ -30,7 +47,7 @@ export class CliApplication {
             return;
         }
 
-        if (yargs.argv.help || this._input.length === 0) {
+        if (yargs.argv.help || yargs.argv.H || this._input.length === 0) {
             this._help();
             return;
         }
@@ -45,16 +62,20 @@ export class CliApplication {
     private _help() {
 
         this._version();
+
+        /*tslint:disable:max-line-length*/
         ts.sys.write("Usage: ts-merge pattern0 [pattern1 ... patternN] [options]\n\n");
         ts.sys.write("pattern0...patternN: glob patterns with the files to be merged\n\n");
         ts.sys.write("[options]: change the behavior of ts-merge:\n");
-        ts.sys.write("  --help                          Displays this usage message\n");
-        ts.sys.write("  --extensionPrefix (merged)      Sets extension prefix for output files\n");
-        ts.sys.write("  --logger none|(console)|file    Sets the logger type\n");
-        ts.sys.write("  --skipDeclarations | -D         Do not parse .d.ts files\n");
-        ts.sys.write("  --skipScripts      | -S         Do not parse .js files\n");
-        ts.sys.write("  --skipSourceMaps   | -M         Prevents generation of .map files\n");
-        ts.sys.write("  --version          | -V         Shows ts-merge version\n");
+        ts.sys.write("  --help             | -H                 Displays this usage message\n");
+        ts.sys.write("  --extensionPrefix  | -E (merged)        Sets extension prefix for output files\n");
+        ts.sys.write("  --outDir           | -O (empty)         Sets the output directory\n");
+        ts.sys.write("  --logger           | -L (console)|none  Sets the logger type\n");
+        ts.sys.write("  --skipDeclarations | -D                 Do not parse .d.ts files\n");
+        ts.sys.write("  --skipScripts      | -S                 Do not parse .js files\n");
+        ts.sys.write("  --skipSourceMaps   | -M                 Prevents generation of .map files\n");
+        ts.sys.write("  --version          | -V                 Shows ts-merge version\n");
+        /*tslint:enable:max-line-length*/
     }
 
     // Parses options given through command-line
@@ -62,12 +83,13 @@ export class CliApplication {
 
         const options: MergeOptions = {};
 
-        const ext = typeof(args.extensionPrefix) === "string" ? args.extensionPrefix : undefined;
+        const ext = args.extensionPrefix || args.E;
         options.extensionPrefix = typeof(ext) === "string" ? ext : "merged";
 
-        const logger = typeof(args.logger) === "string" ? args.logger : undefined;
+        const logger = args.logger || args.L;
         options.logger = logger || "console";
 
+        options.outDir = args.outDir || args.O;
         options.skipDeclarations = !!(args.skipDeclarations || args.D);
         options.skipScripts = !!(args.skipScripts || args.S);
         options.skipSourceMaps = !!(args.skipSourceMaps || args.M);
@@ -78,24 +100,21 @@ export class CliApplication {
     // Runs the CLI application file worker
     private _run() {
 
-        this._fileWorker.addGlobPatterns(() => {
+        this._fileWorker.addGlobPatternsSync.apply(this._fileWorker, this._input);
+        this._fileWorker.workSync();
+        this._fileWorker.write();
 
-            this._fileWorker.work(files => {
-                this._fileWorker.write(files);
+        const time = this._fileWorker.timer.result.toString();
+        this._context.log(`Files processed in ${time}`);
 
-                const time = this._fileWorker.timer.toString();
-                this._context.log(`Files processed in ${time}`);
+        const skipped = this._fileWorker.unsaved.length;
 
-                const skipped = this._fileWorker.unsaved.length;
+        if (skipped === 0) {
+            return;
+        }
 
-                if (skipped === 0) {
-                    return;
-                }
-
-                this._context.log(`Skipped ${skipped} files due to unknown file name`,
-                    LogLevel.Verbose);
-            });
-        }, this._input);
+        this._context.log(`${skipped} files not written due to unknown file name`,
+            LogLevel.Verbose);
     }
 
     // Shows app version

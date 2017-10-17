@@ -48,16 +48,18 @@ function getDictionaryLength<T>(dictionary: Dictionary<T>) {
 
 function joinDeclarations(declarations: Declaration[], separator?: string) {
 
-    let result = "";
+    const bodies: string[] = [];
     separator = separator || "";
 
     for (const declaration of declarations) {
-        result += declaration.body + separator;
+        const body = declaration.body + "";
+
+        if (body.trim().length > 0) {
+            bodies.push(body);
+        }
     }
 
-    result = result.substr(0, result.length - separator.length);
-
-    return result;
+    return bodies.join(separator);
 }
 
 /**
@@ -174,7 +176,51 @@ export class DtsProcessor implements MergeProcessor {
         const length2 = getDictionaryLength(organizedDeclarations);
         this._log(`Total merged namespaces for '${filePath}': ${length2} (from ${length1})`);
 
-        return this._mergeDeclarations(organizedDeclarations);
+        return this._createFile(organizedDeclarations);
+    }
+
+    // Merges a previously organized declaration dictionary
+    private _createFile(declarations: Dictionary<Declaration[]>): File {
+
+        let data = "";
+
+        for (const declarationName in declarations) {
+
+            if (declarations.hasOwnProperty(declarationName)) {
+
+                // Additional declarations have their own body (do not need re-declaration)
+
+                if (additionalRegex.test(declarationName)) {
+                    data += joinDeclarations(declarations[declarationName]);
+                    continue;
+                }
+
+                // Adding what was removed from the original file, now wrapped by a single namespace
+
+                data += `declare namespace ${declarationName} {\n\t`;
+                data += joinDeclarations(declarations[declarationName], "\t");
+                data += "}\n";
+            }
+        }
+
+        let extension = `.${this._context.options.extensionPrefix}.d.ts`;
+        extension = extension.replace("..", ".");
+
+        // Converting newlines
+        data = data
+            .replace(/\r\n/g, "\n")
+            .replace(/\n\r/g, "\n");
+
+        return {
+            contents: data,
+            name: this._file.name.replace(".d.ts", extension),
+            path: this._context.options.outDir || this._file.path,
+            source: {
+                contents: "",
+                name: this._file.name,
+                path: this._context.options.outDir || this._file.path,
+            },
+        };
     }
 
     // Gets the declarations based on the constant regex, resulting in a linear array
@@ -225,45 +271,6 @@ export class DtsProcessor implements MergeProcessor {
     // Context log shortcut method
     private _log(message: string, level: LogLevel = LogLevel.Information) {
         this._context.log(message, level);
-    }
-
-    // Merges a previously organized declaration dictionary
-    private _mergeDeclarations(declarations: Dictionary<Declaration[]>): File {
-
-        let data = "";
-
-        for (const declarationName in declarations) {
-
-            if (declarations.hasOwnProperty(declarationName)) {
-
-                // Additional declarations have their own body (do not need re-declaration)
-
-                if (additionalRegex.test(declarationName)) {
-                    data += joinDeclarations(declarations[declarationName]);
-                    continue;
-                }
-
-                // Adding what was removed from the original file, now wrapped by a single namespace
-
-                data += `declare namespace ${declarationName} {\n\t`;
-                data += joinDeclarations(declarations[declarationName], "\t");
-                data += "}\n";
-            }
-        }
-
-        let extension = `.${this._context.options.extensionPrefix}.d.ts`;
-        extension = extension.replace("..", ".");
-
-        return {
-            contents: data,
-            name: this._file.name.replace(".d.ts", extension),
-            path: this._file.path,
-            source: {
-                contents: "",
-                name: this._file.name,
-                path: this._file.path,
-            },
-        };
     }
 
     // Organizes a linear declaration array into a dictionary profile

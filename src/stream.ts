@@ -2,32 +2,30 @@ import es = require("event-stream");
 import gutil = require("gulp-util");
 
 import {FileWorker} from "./file-worker";
-import {MergeContext, MergeOptions} from "./utils";
+import {MergeOptions} from "./utils";
 
 function doWork(fileWorker: FileWorker) {
 
     return function(this: es.MapStream) {
-        fileWorker.work(files => {
+        const files = fileWorker.workSync();
 
-            for (const file of files) {
+        for (const file of files) {
 
-                const gulpFile = new gutil.File({
-                    base: "",
-                    contents: new Buffer(file.contents),
-                    cwd: "",
-                    path: file.name,
-                });
+            const gulpFile = new gutil.File({
+                base: "",
+                contents: new Buffer(file.contents),
+                cwd: "",
+                path: file.name,
+            });
 
-                this.emit("data", gulpFile);
-            }
+            this.emit("data", gulpFile);
+        }
 
-            this.emit("end");
-        });
+        this.emit("end");
     };
 }
 
 function parseFile(fileWorker: FileWorker) {
-
     return (file: gutil.File) => {
         fileWorker.addFile(file.path);
     };
@@ -41,7 +39,7 @@ function parseFile(fileWorker: FileWorker) {
  *
  * ```javascript
  * // Both ways are correct to import the stream worker:
- * var tsmerge = require('ts-merge/stream');
+ * var tsmerge = require('ts-merge').stream;
  * var tsmerge = require('ts-merge').streamFunction;
  *
  * gulp.task('merge', function() {
@@ -54,12 +52,8 @@ function parseFile(fileWorker: FileWorker) {
  *
  * For more information, see {@link MergeOptions}.
  */
-function streamFunction(options?: MergeOptions): NodeJS.ReadWriteStream {
+export function streamFunction(options?: MergeOptions): NodeJS.ReadWriteStream {
 
-    const context = new MergeContext(options);
-    const fileWorker = new FileWorker(context);
-
+    const fileWorker = new FileWorker(options);
     return (es as any).through(parseFile(fileWorker), doWork(fileWorker));
 }
-
-export = streamFunction;

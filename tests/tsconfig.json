@@ -1,4 +1,5 @@
 {
+    "exclude": ["assets/**/*"],
     "extends": "../tsconfig",
     "include": ["**/*.ts"]
 }

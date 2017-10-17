@@ -162,7 +162,7 @@ export class JsProcessor implements MergeProcessor {
                 this._sourceMapFile = {
                     contents: codegenData.map.toString(),
                     name: newSourceMap,
-                    path: this._file.path,
+                    path: this._context.options.outDir || this._file.path,
                     source: {
                         contents: "",
                         name: this._file.name.replace(".js", ".js.map"),
@@ -174,10 +174,15 @@ export class JsProcessor implements MergeProcessor {
             codegenData = codegenData.code;
         }
 
+        // Converting newlines
+        codegenData = codegenData
+            .replace(/\r\n/g, "\n")
+            .replace(/\n\r/g, "\n");
+
         return {
             contents: codegenData,
             name: newName,
-            path: this._file.path,
+            path: this._context.options.outDir || this._file.path,
             source: {
                 contents: "",
                 name: this._file.name,

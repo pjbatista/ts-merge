@@ -4,86 +4,126 @@ import "mocha";
 import {JsProcessor} from "../src/js-processor";
 import {File, MergeContext} from "../src/utils";
 
-const context = new MergeContext({ logger: "none" });
+const expectedJs = fs.readFileSync("./tests/assets/file1_expected.js").toString();
+const expectedJs2 = fs.readFileSync("./tests/assets/file2_expected.js").toString();
+const expectedJsMap = fs.readFileSync("./tests/assets/file1_expected.js.map").toString();
+const expectedJsMapPrefix = fs.readFileSync("./tests/assets/file1_expected_2.js.map").toString();
+const expectedJsPrefix = fs.readFileSync("./tests/assets/file1_expected_2.js").toString();
+const expectedJsNoMap = fs.readFileSync("./tests/assets/file1_expected_3.js").toString();
+const sourceJs = {
+    contents: fs.readFileSync("./tests/assets/file1_raw.js").toString(),
+    name: "file1_raw.js",
+    path: "tests/assets",
+};
+const sourceJs2 = fs.readFileSync("./tests/assets/file2_raw.js").toString();
+
+const context: MergeContext = new MergeContext({ logger: "none" });
 
 describe("JsProcessor", () => {
 
-    it("short file (with map)", () => {
+    it("should process a long file", function(this: Mocha.ITestCallbackContext) {
+        this.timeout(20000);
+        const processor = new JsProcessor(sourceJs2, context);
+        const result = processor.merge() as File;
 
-        const jsExpected = fs.readFileSync("./tests/assets/file1_expected.js").toString();
-        const mapExpected = fs.readFileSync("./tests/assets/file1_expected.js.map").toString();
-        const raw = fs.readFileSync("./tests/assets/file1_raw.js").toString();
-        const processor = new JsProcessor({
-            contents: raw,
-            name: "file1_raw.js",
-            path: "tests/assets/",
-        }, context);
-
-        const jsResult: File = processor.merge() as File;
-        const mapResult: File = processor.sourceMapFile as File;
-
-        expect(jsResult.contents).to.equal(jsExpected);
-        expect(mapResult.contents).to.equal(mapExpected);
+        expect(result.contents).to.equal(expectedJs2);
     });
 
-    it("long file (without map)", () => {
+    it("should process a named file", () => {
+        const processor = new JsProcessor(sourceJs, context);
+        const result = processor.merge() as File;
+        const source = processor.sourceMapFile as File;
 
-        const expected = fs.readFileSync("./tests/assets/file2_expected.js").toString();
-        const raw = fs.readFileSync("./tests/assets/file2_raw.js").toString();
-        const processor = new JsProcessor(raw, context);
-        const result: File = processor.merge() as File;
+        // Test 1: Script file
+        expect(result.contents).to.equal(expectedJs);
+        expect(result.name).to.equal("file1_raw.merged.js");
+        expect(result.path).to.equal("tests/assets");
 
-        expect(result.contents).to.equal(expected);
+        // Test 2: Map file
+        expect(source.contents).to.equal(expectedJsMap);
+        expect(source.name).to.equal("file1_raw.merged.js.map");
+        expect(source.path).to.equal("tests/assets");
     });
 
-    it("extension prefixing (default)", () => {
+    it("should process a short file", () => {
+        const processor = new JsProcessor(sourceJs, context);
+        const result = processor.merge() as File;
 
-        const raw = fs.readFileSync("./tests/assets/file1_raw.js").toString();
-        const file: File = { contents: raw, name: "file1_raw.js", path: "tests/assets/" };
-        const processor = new JsProcessor(file, context);
-        const jsResult: File = processor.merge() as File;
-        const mapResult: File = processor.sourceMapFile as File;
-
-        expect(jsResult.name).to.equal("file1_raw.merged.js");
-        expect(mapResult.name).to.equal("file1_raw.merged.js.map");
+        expect(result.contents).to.equal(expectedJs);
     });
 
-    it("extension prefixing (empty)", () => {
+    it("should process with extensionPrefix", () => {
+        const thisContext = new MergeContext({ extensionPrefix: "test", logger: "none" });
+        const processor = new JsProcessor(sourceJs, thisContext);
+        const result = processor.merge() as File;
+        const source = processor.sourceMapFile as File;
 
-        const customContext = new MergeContext({ extensionPrefix: "", logger: "none" });
+        // Test 1: Script file
+        expect(result.contents).to.equal(expectedJsPrefix);
+        expect(result.name).to.equal("file1_raw.test.js");
+        expect(result.path).to.equal("tests/assets");
 
-        const raw = fs.readFileSync("./tests/assets/file1_raw.js").toString();
-        const file: File = { contents: raw, name: "file1_raw.js", path: "tests/assets/" };
-        const processor = new JsProcessor(file, customContext);
-        const jsResult: File = processor.merge() as File;
-        const mapResult: File = processor.sourceMapFile as File;
-
-        expect(jsResult.name).to.equal("file1_raw.js");
-        expect(mapResult.name).to.equal("file1_raw.js.map");
+        // Test 2: Map file
+        expect(source.contents).to.equal(expectedJsMapPrefix);
+        expect(source.name).to.equal("file1_raw.test.js.map");
+        expect(source.path).to.equal("tests/assets");
     });
 
-    it("with skipScripts", () => {
+    it("should process with outDir", () => {
+        const thisContext = new MergeContext({ logger: "none", outDir: "tests/temp" });
+        const processor = new JsProcessor(sourceJs, thisContext);
+        const result = processor.merge() as File;
+        const source = processor.sourceMapFile as File;
 
-        const customContext = new MergeContext({ logger: "none", skipScripts: true });
+        // Test 1: Script file
+        expect(result.contents).to.equal(expectedJs);
+        expect(result.name).to.equal("file1_raw.merged.js");
+        expect(result.path).to.equal("tests/temp");
 
-        const file: File = { contents: "", name: "unnamed.js", path: "" };
-        const processor = new JsProcessor(file, customContext);
+        // Test 2: Map file
+        expect(source.contents).to.equal(expectedJsMap);
+        expect(source.name).to.equal("file1_raw.merged.js.map");
+        expect(source.path).to.equal("tests/temp");
+    });
+
+    it("should process with skipDeclarations", () => {
+        const thisContext = new MergeContext({ logger: "none", skipDeclarations: true });
+        const processor = new JsProcessor(sourceJs, thisContext);
+        const result = processor.merge() as File;
+        const source = processor.sourceMapFile as File;
+
+        // Test 1: Script file
+        expect(result.contents).to.equal(expectedJs);
+        expect(result.name).to.equal("file1_raw.merged.js");
+        expect(result.path).to.equal("tests/assets");
+
+        // Test 2: Map file
+        expect(source.contents).to.equal(expectedJsMap);
+        expect(source.name).to.equal("file1_raw.merged.js.map");
+        expect(source.path).to.equal("tests/assets");
+    });
+
+    it("should process with skipScripts", () => {
+        const thisContext = new MergeContext({ logger: "none", skipScripts: true });
+        const processor = new JsProcessor(sourceJs, thisContext);
         const result = processor.merge();
 
         expect(result).to.equal(null);
+        expect(processor.sourceMapFile).to.equal(null);
     });
 
-    it("with skipSourceMaps", () => {
+    it("should process with skipSourceMaps", () => {
+        const thisContext = new MergeContext({ logger: "none", skipSourceMaps: true });
+        const processor = new JsProcessor(sourceJs, thisContext);
+        const result = processor.merge() as File;
+        const source = processor.sourceMapFile;
 
-        const customContext = new MergeContext({ logger: "none", skipSourceMaps: true });
+        // Test 1: Script file
+        expect(result.contents).to.equal(expectedJsNoMap);
+        expect(result.name).to.equal("file1_raw.merged.js");
+        expect(result.path).to.equal("tests/assets");
 
-        const raw = fs.readFileSync("./tests/assets/file1_raw.js").toString();
-        const file: File = { contents: raw, name: "file1_raw.js", path: "tests/assets/" };
-        const processor = new JsProcessor(file, customContext);
-        const jsResult: File = processor.merge() as File;
-        const mapResult = processor.sourceMapFile;
-
-        expect(jsResult.name).to.equal("file1_raw.merged.js");
-        expect(mapResult).to.equal(null);
+        // Test 2: Map file
+        expect(source).to.equal(null);
     });
 });
