@@ -1,7 +1,7 @@
 import fs = require("fs");
 import glob = require("glob");
 import path = require("path");
-import {Timer} from "timecount";
+import {SimpleTimer} from "timecount";
 import {DtsProcessor} from "./dts-processor";
 import {JsProcessor} from "./js-processor";
 import {File, LogLevel, MergeContext, MergeOptions} from "./utils";
@@ -35,7 +35,7 @@ import {File, LogLevel, MergeContext, MergeOptions} from "./utils";
  *     for (var i = 0; i < files.length; i++) {
  *         console.log(files[i].name);
  *     }
- * 
+ *
  *     // Output:
  *     //   myfile.merged.d.ts
  *     //   myfile2.merged.js
@@ -53,7 +53,7 @@ export class FileWorker {
     private _jsList: File[] = [];
     private _mergedFiles: File[] = [];
     private _skipped: File[] = [];
-    private _timer: Timer;
+    private _timer: SimpleTimer;
 
     /** Gets the declaration (d.ts) file array to be merged. */
     public get dtsList(): ReadonlyArray<File> { return this._dtsList; }
@@ -322,7 +322,7 @@ export class FileWorker {
 
         const files: File[] = [];
 
-        this._timer = new Timer();
+        this._timer = new SimpleTimer();
         this._timer.start();
 
         for (const dtsFile of this._dtsList) {
@@ -413,7 +413,7 @@ export class FileWorker {
         doneCallback?: () => void,
     ) {
 
-        this._timer = new Timer();
+        this._timer = new SimpleTimer();
         this._timer.start();
 
         const workGenerator = this._doWork();

@@ -1,8 +1,14 @@
 # ts-merge CHANGELOG
 
+## Version 0.4.2
+
+- Updated a few `timecount` references;
+- Changed `typedoc` theme to "minimal";
+- Fixed typos and references in documentation.
+
 ## Version 0.4.1
 
-Fixed binary due to lack of publishing "dist/".
+Fixed binary due to lack of published "dist/".
 
 ## Version 0.4.0
 
@@ -23,6 +29,8 @@ Fixed binary due to lack of publishing "dist/".
 - Added documentation link to README;
 - Removed `Timer` in favor of [timecount](https://github.com/pjbatista/timecount);
 - Changed documentation index to the new file API.md.
+
+---
 
 ## Version 0.3.0
 

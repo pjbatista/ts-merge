@@ -121,13 +121,13 @@ export interface Declaration {
 }
 
 /**
- * Represents a storage object whose indices are strings.
+ * Represents a storage object with strings as indexer keys.
  *
  * This interface can be used with regular JavaScript objects, to represent their native property
  * dynamic acessor:
  *
- * ```javascript
- * var dictionary = {};
+ * ```typescript
+ * const dictionary: Dictionary<number> = {};
  * dictionary["my-index"] = 1;
  * ```
  *
@@ -143,7 +143,8 @@ export interface Dictionary<TOut> {
 /**
  * Represents a "ts-merge" file object, that contains data and metadata pertaining to a single file.
  *
- * This object is used to transmit information from workers to processors and can be
+ * Objects of this type are used to transmit information from workers to processors. They are
+ * created and changed by said objects.
  */
 export interface File {
 
@@ -168,7 +169,6 @@ export interface File {
 
 /**
  * Represents the callback function used as a logger for ts-merge.
- *
  */
 export type LoggerFunction = (message: string, level?: LogLevel, newLine?: boolean) => void;
 

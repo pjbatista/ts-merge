@@ -27,6 +27,7 @@
         "mode": "file",
         "name": "ts-merge API",
         "out": "docs",
-        "readme": "API.md"
+        "readme": "API.md",
+        "theme": "minimal"
     }
 }

@@ -47,7 +47,7 @@ export class JsProcessor implements MergeProcessor {
      * source for the merging.
      *
      * @param file
-     *   A string with the file contents or a {@link InputFile} object.
+     *   A string with the file contents or a {@link File} object.
      * @param context
      *   Context object used throughout mergings.
      */
