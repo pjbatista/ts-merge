@@ -1,6 +1,6 @@
 {
     "name": "ts-merge",
-    "description": "Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)",
+    "description": "Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map).",
     "author": "Pedro Batista <pedrobatista@myself.com>",
     "keywords": [
         "typescript",
@@ -66,5 +66,5 @@
         "tslint": "^5.7.0",
         "typedoc": "^0.8.0"
     },
-    "version": "0.4.2"
+    "version": "0.4.3"
 }

@@ -1,6 +1,19 @@
 # ts-merge
 
-> Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map)
+> Merge definitions of transpiled TypeScript namespaces, fixing code (.js), declarations (.d.ts) and sourcemaps (.js.map).
+
+## Contents
+
+- [About](#about)
+- [Installation](#installation)
+- [API](#api)
+- [Usage](#usage)
+  - [Direct (in-code)](#direct-in-code)
+  - [Node Streams (e.g. gulp)](#node-streams-eg-gulp)
+  - [Command Line Interface](#command-line-interface)
+- [Changelog](#changelog)
+- [Credits](#credits)
+- [License](#license)
 
 ## About
 
@@ -14,25 +27,31 @@ This plugin is based on and inspired by Till Schneidereit's [typescript-module-m
 
 `ts-merge` can be installed using the node package manager of your choice (npm, yarn):
 
-### Local
+**Local** - allow it to be used on a per project basis:
 
-Local installations allow it to be used on a per project basis:
+`npm install ts-merge --save`
 
-`npm install ts-merge --save` -or- `yarn add ts-merge`
+-or-
 
-### Global
+`yarn add ts-merge`
 
-Global installations expose the **ts-merge** binary to the command-line, making it available, well, globally:
+**Global** - exposes the **ts-merge** binary to the command-line, making it available, well, globally:
 
-`npm install ts-merge -g` -or- `yarn global add ts-merge`
+`npm install ts-merge -g`
+
+-or-
+
+`yarn global add ts-merge`
+
+## API
+
+Visit https://pjbatista.github.io/ts-merge/ for the complete documentation including more examples and options.
 
 ## Usage
 
-**API**: visit https://pjbatista.github.io/ts-merge/ for the full documentation.
-
 Once installed, this package can be used in multiple ways: direct (importing and using in code), in streams (as a part of a node stream pipeline - like gulp), or in consoles/terminals as a CLI app.
 
-### Direct
+### Direct (in-code)
 
 Using ts-merge in your code is pretty straight-forward. You can use a specific processor class in order to merge a single file or use the FileWorker class merge multiple files at once.
 
@@ -102,7 +121,7 @@ fileWorker.work(function (files) {
 });
 ```
 
-### Streams (gulp)
+### Node Streams (e.g. gulp)
 
 `ts-merge` requires no additional plugins to be streamlined and piped. All you need to do is to import the `stream` or `streamFunction` from its exports.
 
@@ -120,9 +139,9 @@ gulp.task("merge", function () {
 });
 ```
 
-### CLI
+### Command Line Interface
 
-The command-line interface application is available globally as `ts-merge` and locally at `node_modules/.bin/ts-merge` (which is [recommended](https://docs.npmjs.com/files/package.json#preferglobal)).
+The CLI application is available globally as `ts-merge` and locally at `node_modules/.bin/ts-merge` (which is [recommended](https://docs.npmjs.com/files/package.json#preferglobal)).
 
 You can specify options using --[option-name] [option-value] modifiers.
 
@@ -138,15 +157,11 @@ ts-merge lib/vendor1/script1.js lib/vendor2/script2/* dist/my.js --logger none
 # Setting logger to "none" prevents any sort of printing
 ```
 
-For more information, use the --help option
-
-```sh
-ts-merge --help
-```
+For more information, see [CliApplication usage](https://pjbatista.github.io/ts-merge/classes/cliapplication.html).
 
 ## Changelog
 
-See [CHANGES.md](https://github.com/pjbatista/ts-merge/blob/master/CHANGES.md)
+See the [changes file](https://github.com/pjbatista/ts-merge/blob/master/CHANGES.md).
 
 ## Credits
 

@@ -1,4 +1,9 @@
-# ts-merge CHANGELOG
+# Changelog
+
+## Version 0.4.3
+
+- Fixed documentation links on API.md;
+- Edited documents for better readability.
 
 ## Version 0.4.2
 
