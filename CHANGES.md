@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.5.0
+
+- Updated dependencies of package.json;
+- Updated TypeScript to v2.6+;
+- Adapted code to new TS version (fixing a few loose-ends).
+
 ## Version 0.4.3
 
 - Fixed documentation links on API.md;

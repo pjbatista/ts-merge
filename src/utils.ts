@@ -54,7 +54,7 @@ const consoleLogger = ((message: string, level: LogLevel = LogLevel.Information)
 
 }) as LoggerFunction;
 
-const noneLogger: LoggerFunction = (message: string) => { message = ""; };
+const noneLogger: LoggerFunction = () => { return; };
 
 /**
  * Extends a default options object with new values.

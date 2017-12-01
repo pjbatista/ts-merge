@@ -27,7 +27,6 @@ import {LogLevel, MergeContext, MergeOptions} from "./utils";
 export class CliApplication {
 
     private _context: MergeContext;
-    private _done: boolean;
     private _fileWorker: FileWorker;
     private _input: string[];
     private _options: MergeOptions;
@@ -38,7 +37,6 @@ export class CliApplication {
      */
     public constructor() {
 
-        this._done = false;
         this._options = this._parseOptions(yargs.argv);
         this._input = yargs.argv._;
 

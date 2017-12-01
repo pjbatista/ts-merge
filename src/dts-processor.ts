@@ -229,7 +229,6 @@ export class DtsProcessor implements MergeProcessor {
         const data = this._file.contents;
         const result: Declaration[] = [];
 
-        let lastIndex = 0;
         let previous: Declaration = undefined as any;
         let search: RegExpExecArray | null = null;
 
@@ -244,8 +243,6 @@ export class DtsProcessor implements MergeProcessor {
 
                 previous.body = data.substr(previous.startIndex, endIndex - previous.startIndex);
                 previous.endIndex = endIndex;
-
-                lastIndex = endIndex;
             }
 
             const current: Declaration = {

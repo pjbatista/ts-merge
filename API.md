@@ -1,4 +1,4 @@
-## Version 0.4
+## Version 0.5
 
 Welcome to the ts-merge [API documentation](https://pjbatista.github.io/ts-merge/)!
 
